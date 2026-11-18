@@ -34,6 +34,9 @@ werden dort zu Zitaten mit „Im Papier finden“.
 - 5–30 Wörter, genug, dass die Stelle eindeutig ist.
 - Nie Warnmarker oder Nummerierung (P1., 2., a)) mitzitieren.
 - Format: eigene Zeile, `> ` davor, Leerzeile davor und danach.
+- Aus einem Claude-Doc kopiert, kommen die Blockzitate im DELEGATOR als Zitate an (geprüft
+  11/2026). Ein als reiner Text eingefügtes `> ` bliebe dagegen Text – dann die Zeile
+  markieren und im Editor als Zitat formatieren.
 
 ## Muster
 

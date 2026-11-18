@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 """Macht Papiere aus dem MUNIFY DELEGATOR lesbar und vergleicht Versionen.
 
-Eingabe (Datei oder stdin): eine GraphQL-Antwort mit `versions { version content }`
-oder das rohe `content` einer Version. Unterstützt:
-  - Positionspapiere: TipTap-JSON (`{"type":"doc", ...}`)
-  - Arbeitspapiere: Resolutions-JSON (`preamble` + `operative`, auch das Altformat)
+Eingabe (Datei, `-`/`--stdin` oder ohne Datei: stdin), eins von:
+  - GraphQL-Antwort mit `versions { version status content reviews { statusAfter } }`
+  - nur das `content`-Feld einer Version (der JSON-String, mit oder ohne Anführungszeichen)
+  - Klartext (oder `--text`): nur Wortzahl
+Erkannt werden TipTap-JSON (Positionspapier) und Resolutions-JSON (Arbeitspapier, auch Altformat).
 
 Aufrufe:
-  papiertext.py antwort.json               neueste Version als Markdown + Wortzahlen
+  papiertext.py antwort.json               neueste Version als Markdown + Wortzahlen + Formalprüfung
+  papiertext.py content.json               dasselbe für ein einzelnes content
+  echo '<content>' | papiertext.py -       dasselbe über stdin
+  papiertext.py --text < text.txt          Klartext: nur Wortzahl
   papiertext.py antwort.json --version 2   eine bestimmte Version
-  papiertext.py antwort.json --diff        Änderungen neueste vs. vorherige Version
+  papiertext.py antwort.json --diff        Änderungen gegenüber der zuletzt bewerteten Version
   papiertext.py antwort.json --diff --version 3 --gegen 1
+
+Satzzeichen am Absatzende prüft das Skript bei Arbeitspapieren nicht: der DELEGATOR speichert
+sie nicht, die Vorschau setzt `,` `;` `.` selbst.
 
 Der ausgegebene Text ist wörtlich (ohne Formatierungszeichen), damit Zitate im
 DELEGATOR über „Im Papier finden“ wiedergefunden werden.
@@ -49,8 +56,21 @@ def _is_resolution(obj: Any) -> bool:
     return isinstance(obj, dict) and isinstance(obj.get("preamble"), list) and isinstance(obj.get("operative"), list)
 
 
+@dataclass
+class VersionMeta:
+    status: str | None = None
+    reviewed: bool | None = None  # None = Reviews nicht abgefragt
+    changes_requested: bool = False
+
+
+META: dict[int, VersionMeta] = {}
+
+
 def find_versions(data: Any) -> dict[int, Any]:
-    """Sammelt {versionsnummer: inhalt}. Rohes Dokument → Version 0."""
+    """Sammelt {versionsnummer: inhalt}. Rohes Dokument → Version 0.
+
+    Füllt nebenbei META mit Status und Reviews je Version, falls abgefragt.
+    """
     data = _parse(data)
     if _is_tiptap(data) or _is_resolution(data):
         return {0: data}
@@ -58,6 +78,15 @@ def find_versions(data: Any) -> dict[int, Any]:
 
     def walk(node: Any) -> None:
         if isinstance(node, dict):
+            if "version" in node and ("reviews" in node or "status" in node or "content" in node):
+                nr = int(node["version"])
+                reviews = node.get("reviews")
+                meta = META.setdefault(nr, VersionMeta())
+                meta.status = node.get("status", meta.status)
+                if isinstance(reviews, list):
+                    meta.reviewed = len(reviews) > 0
+                    meta.changes_requested = any(
+                        r.get("statusAfter") == "CHANGES_REQUESTED" for r in reviews if isinstance(r, dict))
             if "content" in node and "version" in node:
                 content = _parse(node["content"])
                 if _is_tiptap(content) or _is_resolution(content):
@@ -275,15 +304,13 @@ def render(kind: str, sections: list[Section], committee: str | None = None) -> 
     if checks:
         out.append("\n### Formalprüfung (automatisch)\n")
         out.extend(f"- {'✓' if ok else '✗'} {text}" for ok, text in checks)
+        if kind == "Arbeitspapier":
+            out.append("- – Satzzeichen am Absatzende: nicht prüfbar (setzt der DELEGATOR selbst)")
     return "\n".join(out)
 
 
 def _first_line(paragraph: str) -> str:
     return re.sub(r"^(P?\d+\.)\s*", "", paragraph.split("\n")[0]).strip()
-
-
-def _last_line(paragraph: str) -> str:
-    return paragraph.split("\n")[-1].strip()
 
 
 def formal_checks(kind: str, sections: list[Section], total: int) -> list[tuple[bool, str]]:
@@ -304,13 +331,7 @@ def formal_checks(kind: str, sections: list[Section], total: int) -> list[tuple[
         return [i for i, p in enumerate(paras, start=1) if not test(p)]
     up = bad(pre.paragraphs + op.paragraphs, lambda p: not _first_line(p)[:1].isupper())
     checks.append((not up, "Alle Absätze beginnen klein" + (f" (groß: {', '.join(_nr(i, len(pre.paragraphs)) for i in up)})" if up else "")))
-    pc = bad(pre.paragraphs, lambda p: _last_line(p).endswith(","))
-    checks.append((not pc, "Präambelabsätze enden mit Komma" + (f" (nicht: P{', P'.join(map(str, pc))})" if pc else "")))
-    body, last = op.paragraphs[:-1], op.paragraphs[-1:]
-    sc = bad(body, lambda p: _last_line(p).endswith(";"))
-    checks.append((not sc, "Operative Absätze enden mit Semikolon (außer dem letzten)" + (f" (nicht: {', '.join(map(str, sc))})" if sc else "")))
-    if last:
-        checks.append((_last_line(last[0]).endswith("."), "Letzter operativer Absatz endet mit Punkt"))
+    # Satzzeichen am Absatzende: nicht prüfbar (setzt der DELEGATOR beim Anzeigen selbst).
     return checks
 
 
@@ -344,6 +365,11 @@ def render_diff(old: list[Section], new: list[Section], v_old: int, v_new: int) 
                 label = "leicht geändert" if r > 0.9 else "überarbeitet" if r > 0.5 else "neu geschrieben"
             out.append(f"| {title} | {o.words} | {n.words} | {label}, {r:.0%} gleich |")
 
+    if all(o.paragraphs == n.paragraphs for o, n in ((old_by.get(t), new_by.get(t)) for t in new_by) if o) \
+            and old_by.keys() == new_by.keys():
+        out.append(f"\nVersion {v_new} ist textgleich mit Version {v_old} (erneut eingereicht ohne Änderung).")
+        return "\n".join(out)
+
     out.append("\n## Geänderte Absätze\n")
     for title in [s.title for s in new]:
         o, n = old_by.get(title), new_by.get(title)
@@ -365,19 +391,66 @@ def render_diff(old: list[Section], new: list[Section], v_old: int, v_new: int) 
     return "\n".join(out)
 
 
+def _same(a: Any, b: Any) -> bool:
+    return [(x.title, x.paragraphs) for x in to_sections(a)[1]] == [(x.title, x.paragraphs) for x in to_sections(b)[1]]
+
+
+def _history(numbers: list[int], versions: dict[int, Any], v_new: int) -> list[str]:
+    """Hinweise für die Metadaten: Erst-/Zweitkorrektur, Entwürfe, textgleiche Folgeversionen."""
+    notes = []
+    known = sorted(set(numbers) | set(META))
+    older = [n for n in known if n < v_new]
+    if not META or any(META[n].reviewed is None for n in older if n in META) or any(n not in META for n in older):
+        if older:
+            notes.append("Reviews nicht in der Eingabe – Erst-/Zweitkorrektur nicht bestimmbar.")
+    else:
+        reviewed = [n for n in older if META[n].reviewed]
+        drafts = [n for n in older if META[n].status == "DRAFT"]
+        if not reviewed:
+            notes.append("Erstkorrektur" + (f" (Versionen {older[0]}–{older[-1]} waren Entwürfe)" if older and drafts == older
+                                            else f" (frühere Versionen ohne Review: {', '.join(map(str, older))})" if older else ""))
+        else:
+            notes.append(f"Zweitkorrektur: zuletzt bewertet wurde Version {reviewed[-1]}.")
+    if older and older[-1] in versions and _same(versions[older[-1]], versions[v_new]):
+        notes.append(f"Version {v_new} ist textgleich mit Version {older[-1]}.")
+    return notes
+
+
+def _last_reviewed(numbers: list[int], v_new: int) -> int | None:
+    older = [n for n in sorted(set(numbers) | set(META)) if n < v_new]
+    cr = [n for n in older if META.get(n) and META[n].changes_requested]
+    if cr:
+        return cr[-1]
+    rv = [n for n in older if META.get(n) and META[n].reviewed]
+    return rv[-1] if rv else None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("datei", nargs="?", help="GraphQL-Antwort oder rohes content (sonst stdin)")
+    ap.add_argument("datei", nargs="?", help="GraphQL-Antwort, content oder Klartext; '-' oder leer = stdin")
+    ap.add_argument("--stdin", action="store_true", help="Eingabe von stdin lesen")
+    ap.add_argument("--text", action="store_true", help="Eingabe ist Klartext: nur Wortzahl")
     ap.add_argument("--version", type=int, help="Version (Standard: neueste)")
-    ap.add_argument("--diff", action="store_true", help="Änderungen gegenüber einer älteren Version")
-    ap.add_argument("--gegen", type=int, help="Vergleichsversion für --diff (Standard: die davor)")
+    ap.add_argument("--diff", action="store_true", help="Änderungen gegenüber der zuletzt bewerteten Version")
+    ap.add_argument("--gegen", type=int, help="Vergleichsversion für --diff (statt der zuletzt bewerteten)")
     args = ap.parse_args()
 
-    raw = open(args.datei, encoding="utf-8").read() if args.datei else sys.stdin.read()
-    versions = find_versions(raw)
+    if args.stdin or not args.datei or args.datei == "-":
+        raw = sys.stdin.read()
+    else:
+        raw = open(args.datei, encoding="utf-8").read()
+
+    versions = {} if args.text else find_versions(raw)
     if not versions:
-        print("Kein Papierinhalt gefunden (weder TipTap- noch Resolutions-JSON).", file=sys.stderr)
-        return 1
+        if not args.text and raw.lstrip()[:1] in "{[\"" and raw.strip():
+            print("Kein Papierinhalt gefunden (weder TipTap- noch Resolutions-JSON).", file=sys.stderr)
+            return 1
+        text = raw.strip()
+        sec = Section("Fließtext", paragraphs=[p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()])
+        print(f"Klartext: {sec.words} Wörter in {len(sec.paragraphs)} Absätzen.")
+        print("Formalprüfung nur mit content-JSON; sonst von Hand nach Checkliste.")
+        return 0
+
     numbers = sorted(versions)
     v_new = args.version if args.version is not None else numbers[-1]
     if v_new not in versions:
@@ -387,11 +460,28 @@ def main() -> int:
 
     if not args.diff:
         print(f"<!-- Version {v_new} von {numbers} -->\n")
+        for note in _history(numbers, versions, v_new):
+            print(f"> {note}")
+        print()
         print(render(kind, new_sections))
         return 0
 
-    older = [n for n in numbers if n < v_new]
-    v_old = args.gegen if args.gegen is not None else (older[-1] if older else None)
+    if args.gegen is not None:
+        v_old = args.gegen
+    elif META and all(m.reviewed is not None for m in META.values()):
+        v_old = _last_reviewed(numbers, v_new)
+        if v_old is None:
+            print("Keine bewertete Vorversion – Erstkorrektur, kein Abschnitt „Was hat sich geändert“.")
+            return 0
+        if v_old not in versions:
+            print(f"Zuletzt bewertet wurde Version {v_old}; deren content fehlt in der Eingabe – mit abfragen.",
+                  file=sys.stderr)
+            return 1
+    else:
+        older = [n for n in numbers if n < v_new]
+        v_old = older[-1] if older else None
+        if v_old is not None:
+            print("<!-- Reviews nicht abgefragt: Vergleich mit der direkten Vorversion -->")
     if v_old is None or v_old not in versions:
         print(f"Keine Vergleichsversion. Vorhanden: {numbers} – Versionen mit abfragen.", file=sys.stderr)
         return 1

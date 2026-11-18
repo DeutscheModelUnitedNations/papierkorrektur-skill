@@ -9,7 +9,8 @@ Diese Datei sagt nur, **was** hineinkommt.
 
 `<Staat/NA> · <Gremienkürzel> TOP: <Kurztitel> · <Positionspapier|Arbeitspapier> v<N>`
 z. B. „Kenia · MRR · Zugang zur Justiz · Positionspapier v2“.
-Staatsnamen auf Deutsch aus dem alpha-3-Code ableiten.
+Staatsnamen auf Deutsch aus dem alpha-3-Code ableiten. `v<N>` ist immer die
+DELEGATOR-Versionsnummer, auch wenn die Versionen davor nur Entwürfe waren.
 
 ## Reihenfolge
 
@@ -26,12 +27,21 @@ Eine Tabelle (Feld | Wert):
 - Delegation (Staat/NA, alpha-3)
 - Papiertyp
 - Version: „<N> (von <N>)“ und Status der Version
+- Korrektur: „Erstkorrektur“ (ggf. „Versionen 1–<N-1> waren Entwürfe“) oder
+  „Zweitkorrektur, zuletzt bewertet: Version <M>“; textgleiche Folgeversionen benennen
+  („Version 6 ist textgleich mit Version 5“). `papiertext.py` gibt diese Zeilen aus.
 - Erste Einreichung, letzte Änderung (Datum)
 - Bisherige Reviews: je Datum + Übergang, z. B. „15.04.2026 SUBMITTED → CHANGES_REQUESTED“, oder „keine“
 - Umfang: Wörter (Positionspapier) bzw. Absätze Präambel/operativ (Arbeitspapier)
 - Papier-ID
 
-### 2. Was hat sich geändert (nur ab Version 2)
+### 2. Was hat sich geändert (nur bei Zweitkorrektur)
+Nur wenn eine frühere Version **ein Review** hat. Entwürfe (`DRAFT`) und Versionen ohne
+Review zählen nicht – sonst fällt der Abschnitt weg, auch bei Version 6. Verglichen wird
+mit der **zuletzt bewerteten Version** (Review mit `statusAfter: CHANGES_REQUESTED`), nicht
+mit der direkten Vorversion; `papiertext.py --diff` macht das von selbst. Ist die neue
+Version textgleich mit der bewerteten, steht hier nur dieser eine Satz.
+
 Lead-Satz mit dem Kern („Abschnitt 5 neu geschrieben, Zusammenfassung gekürzt, sonst
 unverändert.“), dann die Tabelle aus `papiertext.py --diff` (Abschnitt | vorher | jetzt |
 Änderung). Keine Absatz-Diffs abdrucken. Darunter ein Satz zum früheren Feedback: woher
@@ -47,14 +57,18 @@ Der Text der bewerteten Version **wörtlich**, so wie `papiertext.py` ihn ausgib
 Nichts am Papiertext korrigieren oder umstellen – Zitate im Feedback müssen sich im
 DELEGATOR wiederfinden lassen.
 
-**Anmerkungen als Kommentare.** Erst wenn der Papiertext steht: für jede Anmerkung ein
-Doc-Kommentar, verankert an 3–6 wörtlichen Wörtern der Stelle. Kommentar-Text beginnt mit
+**Anmerkungen als Kommentare.** Gleich nachdem der Papiertext steht, **vor** Bewertung und
+Feedback-Text: für jede Anmerkung ein Doc-Kommentar, verankert an 3–6 wörtlichen Wörtern
+der Stelle, **immer mit `"nth": 1`** im Anker. Die Zitate tauchen später im Feedback-Text
+ein zweites Mal auf; das erste Vorkommen ist die Stelle im Papiertext. Kommentar-Text beginnt mit
 einem Etikett:
 - `Kernpunkt 1:` … `Kernpunkt 3:` – die ~3 Punkte, die ins Feedback gehen
 - `Hinweis:` – weitere Anmerkung, nicht im Feedback
 - `Lob:` – konkrete Stärke, die im Feedback auftaucht
 - `⚠ Warnung:` – schwerer Mangel (Faktenfehler, falsche Perspektive, Anzeichen für KI-Text,
   Pflichtteil fehlt)
+
+Ist eine Warnung zugleich Kernpunkt, beides kombinieren: `⚠ Warnung (Kernpunkt 1): …`.
 
 Danach knapp: was auffällt, warum es zählt (Checklistenpunkt), ggf. Vorschlag. Kommentare
 sind kurz (Karte ~40 Zeichen breit, ≤ 4 Zeilen).
@@ -72,7 +86,9 @@ Abschnittsüberschrift oder an den ersten Satz des Papiers.
   ergänzende Checkliste plus die passenden Punkte der Positionspapier-Liste. Ergebnisse der
   automatischen Formalprüfung übernehmen.
 - **Diskussionspunkte:** Liste der „Punkte zur Diskussion“ aus dem Gremientext, je mit
-  „behandelt in Abschnitt …“ oder „nicht behandelt“.
+  „behandelt in Abschnitt …“ oder „nicht behandelt“. Wörtlich, wenn über API oder Browser
+  geholt (guide-dmun.md); kam der Text nur über WebFetch, über der Liste vermerken:
+  „sinngemäß nach Gremientext“.
 - **Die drei Kernpunkte** als nummerierte Liste (dieselben wie in den Kommentaren).
 
 ### 5. Klassifikation

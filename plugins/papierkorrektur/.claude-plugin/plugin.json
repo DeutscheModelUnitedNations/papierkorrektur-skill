@@ -1,6 +1,6 @@
 {
   "name": "papierkorrektur",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Korrigiert Positions- und Arbeitspapiere aus dem MUNIFY DELEGATOR: Gremientext aus guide.dmun.de, Bewertung nach DMUN-Korrekturleitfaden, kommentiertes Claude-Doc mit Klassifikation und Feedback-Text.",
   "author": {
     "name": "Tade Strehk"

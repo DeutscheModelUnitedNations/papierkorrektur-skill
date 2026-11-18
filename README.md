@@ -21,6 +21,7 @@ plugins/papierkorrektur/
     references/dokument-aufbau.md        # Aufbau des Korrektur-Docs
     references/feedback-vorlage.md       # Feedback-Text an die Delegation
     scripts/papiertext.py                # Papier-JSON → Text, Wortzahlen, Formalprüfung, Versionsvergleich
+    scripts/guide.py                     # Gremientext wörtlich über die Ghost-API von guide.dmun.de
 ```
 
 ## Installation

@@ -88,7 +88,12 @@ das am längsten unberührte zuerst):
 
 Erst `submitted`, sonst `revised`. Beides leer → „Für dieses Thema wartet kein Papier.“
 
+**Die nächsten N Papiere:** dieselbe Abfrage mit `limit: N` in beiden Zweigen. Erst die
+`submitted` nehmen; sind es weniger als N, mit `revised` in deren Reihenfolge auffüllen.
+
 ## Gremien und Themen einer Konferenz
+
+Pro Gremium:
 
 ```graphql
 {
@@ -96,6 +101,21 @@ Erst `submitted`, sonst `revised`. Beides leer → „Für dieses Thema wartet k
   committeeAgendaItems(where: { committeeId: { eq: "<COMMITTEE>" } }) { id title }
 }
 ```
+
+Übersicht, wo Papiere warten (alle Themen der Konferenz, getestet 2026-11):
+
+```graphql
+{
+  committeeAgendaItems(where: { committee: { conferenceId: { eq: "<CONF>" } } }) {
+    id title committee { abbreviation }
+    sub: papers(where: { status: SUBMITTED }) { id type }
+    rev: papers(where: { status: REVISED })   { id type }
+  }
+}
+```
+
+Die Antwort kann groß werden (im Test über 400 Papiere). Für die Rückfrage an die Person nur
+Zählungen pro Thema und Typ verwenden, keine ID-Listen.
 
 ## Ein Papier mit allen Versionen
 
@@ -113,9 +133,29 @@ Erst `submitted`, sonst `revised`. Beides leer → „Für dieses Thema wartet k
 }
 ```
 
-Bei sehr vielen Versionen reicht `versions(orderBy: { version: desc }, limit: 2)` für
-neueste Version und Vorversion; den Verlauf (Anzahl Versionen, Review-Zeitpunkte) dann
-separat ohne `content` abfragen.
+Bei vielen Versionen den Inhalt nur für die neuesten laden, den Verlauf ohne `content`:
+
+```graphql
+{
+  paper(id: "<PAPER>") {
+    id type status firstSubmittedAt updatedAt
+    delegation { assignedRole { name nationAlpha3Code kind } }
+    agendaItem { id title teaserText committee { name abbreviation } }
+    verlauf: versions(orderBy: { version: desc }) {
+      version status createdAt reviews { statusBefore statusAfter createdAt }
+    }
+    neu: versions(orderBy: { version: desc }, limit: 2) { version content }
+  }
+}
+```
+
+Ist die zuletzt bewertete Version (die mit Review `statusAfter: CHANGES_REQUESTED`) nicht
+unter den zwei neuesten, `neu` mit größerem `limit` erneut abfragen oder die Abfrage mit
+allen Versionen nehmen – `papiertext.py --diff` meldet den Fall.
+
+**Erst- oder Zweitkorrektur** entscheiden die Reviews, nicht die Versionsnummer: Hat keine
+frühere Version ein Review, ist es eine Erstkorrektur (frühere Versionen waren Entwürfe oder
+ohne Bewertung). Verglichen wird immer mit der zuletzt bewerteten Version.
 
 Wenn eine Abfrage mit einem Feld- oder Filterfehler scheitert, schlag den Typ mit
 `graphql_schema` nach und korrigiere sie, statt zu raten.

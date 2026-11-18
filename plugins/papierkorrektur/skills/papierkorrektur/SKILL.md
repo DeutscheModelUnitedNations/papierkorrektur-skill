@@ -41,6 +41,8 @@ Rufe `whoami` auf (Konferenzen und Rollen). Dann je nach Angabe
 | Papier-ID | Konferenzen aus `whoami` durchprobieren |
 | Land + Gremium + Konferenz | Gremium → Themen → Papiere, nach `nationAlpha3Code` filtern |
 | Thema/Gremium, kein Papier | nächstes Papier nach DELEGATOR-Logik (`findNextPaperToReview`, mit Typwunsch nachgebaut) |
+| Thema + Typ + Anzahl N | Abfrage „mit Typwunsch“ mit `limit: N`; erst `submitted`, bei zu wenigen mit `revised` auffüllen |
+| „wo warten Papiere?“ | Übersichtsabfrage aller Themen, nur Zählungen zeigen |
 | nichts davon | nachfragen |
 
 Frag **nur bei echtem Zweifel** und dann alles in **einer** Rückfrage:
@@ -51,26 +53,44 @@ Frag **nur bei echtem Zweifel** und dann alles in **einer** Rückfrage:
   (es ist über MCP nicht lesbar; der Leitfaden will, dass Zweitkorrekturen sich darauf
   konzentrieren). „Ohne“ ist eine gültige Antwort.
 
-Lade dann für jedes Papier alle Metadaten und die Versionen („Ein Papier mit allen
-Versionen“). Bewertet wird die **neueste Version**. Wartet für ein Thema kein Papier, sag das.
+Hat die Konferenz den Status `POST` (vorbei), trotzdem normal korrigieren. Im Chat kurz
+darauf hinweisen und eine laufende Folgekonferenz aus `whoami` nennen, falls es eine gibt.
+Steht ohnehin eine Rückfrage an, den Hinweis dort mit hineinnehmen.
 
-Wenn du eine Shell hast: Antwort als JSON-Datei speichern (Scratchpad/temporär) und
+Lade dann für jedes Papier alle Metadaten und die Versionen („Ein Papier mit allen
+Versionen“, bei vielen Versionen die geteilte Variante). Bewertet wird die **neueste
+Version**. **Erst- oder Zweitkorrektur entscheiden die Reviews**, nicht die Versionsnummer:
+Ohne Review einer früheren Version ist es eine Erstkorrektur, auch bei v6 (Regel in
+[dokument-aufbau.md](references/dokument-aufbau.md), Abschnitt 2). Wartet für ein Thema
+kein Papier, sag das.
+
+**Text, Wortzahl und Formalprüfung.** Die Antwort von `graphql_query` liegt nur im Kontext,
+nicht als Datei. Das Skript braucht aber Text auf der Platte oder auf stdin. Kürzester Weg:
+das `content` der neuesten Version (bei Zweitkorrektur die ganze Antwort mit Verlauf) mit dem
+Write-Werkzeug als JSON in den Scratchpad schreiben, dann
 
 ```bash
-python3 <skill-ordner>/scripts/papiertext.py antwort.json          # Text, Wortzahlen, Formalprüfung
-python3 <skill-ordner>/scripts/papiertext.py antwort.json --diff   # Änderungen zur Vorversion
+python3 <skill-ordner>/scripts/papiertext.py content.json        # Text, Wortzahl, Formalprüfung, Erst-/Zweitkorrektur
+python3 <skill-ordner>/scripts/papiertext.py antwort.json --diff # Änderungen zur zuletzt bewerteten Version
+python3 <skill-ordner>/scripts/papiertext.py --text < text.txt   # Klartext: nur Wortzahl
 ```
 
-Das Skript liest TipTap (Positionspapier) und Resolutions-JSON (Arbeitspapier), gibt den
-Text wörtlich aus, zählt Wörter und prüft die mechanischen Leitfaden-Punkte (Länge,
-Absatzzahlen, Klein-/Großschreibung, Komma/Semikolon/Punkt). Ohne Shell: Text selbst aus dem
-JSON lesen und Wortzahlen als „ca.“ angeben.
+Das Skript erkennt TipTap- und Resolutions-JSON selbst, auch als JSON-String; `-` oder
+`--stdin` liest von stdin. Ausgegebener Text ist wörtlich, also zitierfähig. Bei großen
+Antworten nur die neuesten Versionen mit `content` abfragen (mcp-abfragen.md).
+
+**Gleichwertiger Weg ohne Skript:** Text selbst aus dem JSON lesen, Wörter mit `wc -w` auf
+dem Klartext zählen (ohne Shell: „ca.“) und die Formalpunkte von Hand nach der Checkliste
+prüfen. Satzzeichen am Absatzende von Arbeitspapieren nicht prüfen – die setzt der DELEGATOR
+selbst (korrekturleitfaden.md, Hinweis zur Datenlage).
 
 ## Schritt 1 – Gremientext holen
 
-Nach [guide-dmun.md](references/guide-dmun.md): Guide-Wurzel der Konferenz → Gremium →
-Themenlink, dessen Titel zum `agendaItem.title` passt → Seite lesen. Merk dir die
-**Punkte zur Diskussion** wörtlich, zentrale Fakten und die wichtigen Dokumente.
+Nach [guide-dmun.md](references/guide-dmun.md): Thema über Gremium und Titel finden
+(sinngleiche Titel zählen, die Jahreszahl im Guide nicht), dann den Volltext holen – zuerst
+`scripts/guide.py` (Ghost-API), sonst Browser (`get_page_text`), zuletzt WebFetch. Merk dir
+die **Punkte zur Diskussion** wörtlich (bei WebFetch: im Doc als „sinngemäß“ markieren),
+zentrale Fakten und die wichtigen Dokumente.
 
 Passt nichts eindeutig, bitte um einen **Link, eine Datei oder kopierten Text** und warte.
 Ohne Gremientext keine Bewertung der Diskussionspunkte – nicht erfinden.
@@ -84,8 +104,9 @@ Bewerte nach dem [Korrekturleitfaden](references/korrekturleitfaden.md):
   Inhalte da sind, nicht die Überschriften.
 - Arbeitspapier: ergänzende Checkliste plus die passenden inhaltlichen Punkte.
 - Notiere **alle** Befunde, wähle die **~3 wichtigsten als Kernpunkte** und 1–2 konkrete Stärken.
-- Maßstab: Erstannahme ist selten (ca. 5–15 %). Bei Zweitkorrekturen zählt vor allem, ob
-  die früheren Punkte umgesetzt sind; dann darf der Maßstab sinken.
+- Maßstab: Erstannahme ist selten (ca. 5–15 %). Bei Zweitkorrekturen (es gibt ein Review
+  einer früheren Version) zählt vor allem, ob die früheren Punkte umgesetzt sind; dann darf
+  der Maßstab sinken. Ohne Review gilt der Erstmaßstab, egal welche Versionsnummer.
 - **Sichtbare Mühe zählt:** Merkt man dem Papier an, dass ernsthaft Arbeit hineingeflossen
   ist (eigene Recherche, durchdachte Vorschläge, sorgfältige Ausarbeitung), darf es
   angenommen werden, auch wenn noch Punkte offen sind. Die stehen dann als „Optional“ dabei.
@@ -94,9 +115,11 @@ Bewerte nach dem [Korrekturleitfaden](references/korrekturleitfaden.md):
   der vorsitzenden Person.
 
 Lege dann **ein Doc pro Papier** an, genau nach [dokument-aufbau.md](references/dokument-aufbau.md):
-Deeplink ganz oben → Metadaten → (ab v2) Was hat sich geändert → Papiertext mit Kommentaren
-und Warnmarkern → Bewertung → Klassifikation → Feedback-Text. Folge dabei den Anweisungen
-des Docs-Servers (Doc öffnen, Abschnitt für Abschnitt füllen, dann Kommentare setzen).
+Deeplink ganz oben → Metadaten → (nur Zweitkorrektur) Was hat sich geändert → Papiertext mit
+Kommentaren und Warnmarkern → Bewertung → Klassifikation → Feedback-Text. Folge dabei den
+Anweisungen des Docs-Servers (Doc öffnen, Abschnitt für Abschnitt füllen). Die Kommentare
+setzt du **direkt nach dem Abschnitt Papiertext**, vor Bewertung und Feedback, jeden Anker
+mit `"nth": 1` – sonst landen sie bei den Zitaten im Feedback-Text.
 Ohne Docs-Server: Markdown-Datei als Fallback (siehe dort).
 
 Klassifikation:

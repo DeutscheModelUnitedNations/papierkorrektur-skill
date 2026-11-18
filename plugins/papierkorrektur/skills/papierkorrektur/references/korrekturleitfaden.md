@@ -20,6 +20,8 @@ Fehler und passende Textbausteine“ sind im Original noch in Arbeit und fehlen 
   Der Maßstab sinkt im zweiten Anlauf auf ein individuelles Niveau, abhängig vom
   vorherigen Feedback. Eine dritte oder vierte Schleife ist manchmal nötig, hat aber
   niedrigere Priorität als Papiere anderer Teilnehmender.
+  Zweitkorrektur heißt: Es gibt mindestens ein Review einer früheren Version. Maßgeblich
+  sind die Reviews, nicht die Versionsnummer – Entwürfe (`DRAFT`) zählen nicht.
 - Textbausteine nie wortgleich wiederverwenden; Feedback soll individuell wirken.
 
 ### Lob
@@ -112,3 +114,7 @@ am Absatzanfang):
 
 Hinweis zur Datenlage: Der DELEGATOR speichert Arbeitspapier-Absätze als reinen Text.
 Ob ein Operator kursiv gesetzt ist, lässt sich daraus nicht prüfen – das nicht bemängeln.
+Ebenso die **Satzzeichen am Absatzende** (Komma, Semikolon, Schlusspunkt): Der DELEGATOR
+speichert sie nicht, die Resolutionsvorschau setzt sie selbst (Resolutionseditor,
+`importNormalize.ts`, `paragraphDiff.ts`). Fehlende Satzzeichen im Rohtext sind also kein
+Befund. Klein-/Großschreibung am Absatzanfang ist dagegen getippt und prüfbar.
