@@ -1,8 +1,9 @@
 # Papierkorrektur
 
-Claude-Plugin-Marketplace mit einem Skill, der MUN-Papiere (Positions-, Arbeits- und
-Einführungspapiere) aus dem [MUNIFY DELEGATOR](https://delegator.munify.cloud) per MCP liest
-und Korrektur-Feedback für Vorsitzende schreibt. Claude ändert dabei nichts im DELEGATOR:
+Claude-Plugin-Marketplace mit einem Skill, der MUN-Positions- und Arbeitspapiere aus dem
+[MUNIFY DELEGATOR](https://delegator.munify.cloud) per MCP liest, den Gremientext aus
+[guide.dmun.de](https://guide.dmun.de) holt, nach dem DMUN-Korrekturleitfaden bewertet und
+pro Papier ein Claude-Doc mit kommentiertem Papiertext, Klassifikation und Feedback-Text anlegt. Claude ändert dabei nichts im DELEGATOR:
 Das Feedback trägt die vorsitzende Person selbst ein.
 
 ## Aufbau
@@ -14,10 +15,12 @@ plugins/papierkorrektur/
   .mcp.json                              # MUNIFY-DELEGATOR-MCP (https://delegator.munify.cloud/mcp)
   skills/papierkorrektur/
     SKILL.md                             # Ablauf und Regeln
-    references/mcp-abfragen.md           # getestete GraphQL-Abfragen
-    references/bewertungskriterien.md    # Kriterien je Papiertyp
-    references/feedback-vorlage.md       # Ausgabeformat
-    scripts/tiptap_to_text.py            # TipTap-JSON → Markdown + Wortzahlen
+    references/korrekturleitfaden.md     # Maßstab und Checklisten (Korrekturleitfaden MUN-SH 2027)
+    references/guide-dmun.md             # Gremientext auf guide.dmun.de finden
+    references/mcp-abfragen.md           # getestete GraphQL-Abfragen, Deeplinks
+    references/dokument-aufbau.md        # Aufbau des Korrektur-Docs
+    references/feedback-vorlage.md       # Feedback-Text an die Delegation
+    scripts/papiertext.py                # Papier-JSON → Text, Wortzahlen, Formalprüfung, Versionsvergleich
 ```
 
 ## Installation
@@ -50,10 +53,10 @@ claude plugin validate .
 ```
 
 ```bash
-python3 plugins/papierkorrektur/skills/papierkorrektur/scripts/tiptap_to_text.py antwort.json
+python3 plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py antwort.json --diff
 ```
 
-Offen: Kriterien für Arbeits- und Einführungspapiere in `references/bewertungskriterien.md`.
+Offen: Abschnitte „Typische Fehler und Textbausteine“ des Korrekturleitfadens (im Original noch in Arbeit).
 
 ## Lizenz
 

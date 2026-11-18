@@ -1,76 +1,110 @@
 # MCP-Abfragen für den MUNIFY DELEGATOR
 
-Alle Abfragen laufen über `graphql_query` mit `conferenceId`. Die Beispiele sind gegen
-den Server getestet (Stand 2026-11). Gotchas:
+Werkzeuge: `whoami`, `graphql_schema`, `graphql_query` (Präfix je nach Installation).
+Alle Abfragen laufen über `graphql_query` mit `conferenceId`. Getestet 2026-11.
 
-- ID-Filter nutzen `{ eq: "…" }` (nicht `equals`).
-- Der Status-Filter auf `Paper` nimmt **einen** Enum-Wert direkt: `where: { status: SUBMITTED }`.
-  `in` geht nicht – für `SUBMITTED` und `REVISED` zwei Abfragen oder zwei Aliasse.
-- `Paper` lässt sich nicht nach Konferenz filtern – geh über Gremien bzw. Tagesordnungspunkte.
-- Den Staat einer Delegation liefert `delegation.assignedRole.nationAlpha3Code` (klein,
-  z. B. `eth`). `name` ist bei Staaten meist `null`; bei NGOs o. Ä. (`kind` ≠ `NATION`) steht er dort.
+## Gotchas
+
+- ID-Filter: `{ eq: "…" }` (nicht `equals`).
+- Enum-Filter direkt: `where: { status: SUBMITTED, type: POSITION_PAPER }`; `in` geht nicht.
+- Sortieren: `orderBy: { updatedAt: asc }`, Versionen `orderBy: { version: desc }`.
+- `Paper` lässt sich nicht nach Konferenz filtern – über Gremium → Tagesordnungspunkt gehen.
+- Staat einer Delegation: `delegation.assignedRole.nationAlpha3Code` (klein, z. B. `eth`).
+  `name` ist bei Staaten meist `null`; bei NA (`kind` ≠ `NATION`) steht dort der Name.
+- `Paperreview.comments` und alle Personendaten sind **redacted**. Frühere Feedbacks sind
+  also nicht lesbar – nur Status-Übergänge und Zeitpunkte.
+- `findNextPaperToReview` ist nur für das Papier-Team erlaubt (sonst FORBIDDEN).
+
+## Deeplinks
+
+- Korrekturseite: `https://delegator.munify.cloud/dashboard/<conferenceId>/paperhub/<paperId>`
+- Leseansicht: `https://delegator.munify.cloud/dashboard/<conferenceId>/paperhub/view/<paperId>`
+
+Ins Dok kommt immer der Link zur **Korrekturseite**.
 
 ## Datenmodell (Auszug)
 
 | Typ | Wichtige Felder |
 |---|---|
-| `Paper` | `id`, `type` (`POSITION_PAPER`, `WORKING_PAPER`, `INTRODUCTION_PAPER`), `status`, `delegation`, `agendaItem`, `firstSubmittedAt`, `versions` |
-| `Paperversion` | `version`, `status`, `content` (TipTap-JSON als String), `reviews` |
-| `Paperreview` | `statusBefore`, `statusAfter`, `createdAt`, `comments` (**redacted**) |
-| `Committeeagendaitem` | `id`, `title`, `teaserText`, `committee`, `reviewHelpStatus`, `papers` |
+| `Paper` | `id`, `type` (`POSITION_PAPER`, `WORKING_PAPER`, `INTRODUCTION_PAPER`), `status`, `firstSubmittedAt`, `updatedAt`, `delegation`, `agendaItem`, `versions` |
+| `Paperversion` | `version`, `status`, `createdAt`, `content` (JSON-String), `reviews` |
+| `Paperreview` | `statusBefore`, `statusAfter`, `createdAt`, `comments` (redacted) |
+| `Committeeagendaitem` | `id`, `title`, `teaserText`, `committee`, `papers` |
 | `Committee` | `id`, `name`, `abbreviation` |
 
-Status: `DRAFT` → `SUBMITTED` → `CHANGES_REQUESTED` → `REVISED` → … → `ACCEPTED`.
+Status: `DRAFT` → `SUBMITTED` → `CHANGES_REQUESTED` ⇄ `REVISED` → `ACCEPTED`.
+`content`: Positionspapier = TipTap-JSON, Arbeitspapier = Resolutions-JSON
+(`preamble[]`, `operative[]` mit verschachtelten `subclauses`).
 
-## Gremien der Konferenz
+## Papiere auflösen
 
-```graphql
-{
-  findPapersGroupedByCommittee(conferenceId: "<CONF>") {
-    committee { id name abbreviation }
-  }
-}
-```
+### a) Link
+Aus `…/dashboard/<conferenceId>/paperhub/[view/]<paperId>` beide IDs nehmen → Abfrage „Ein Papier“.
 
-## Offene Papiere eines Gremiums
+### b) Nur Papier-ID
+`whoami` → die Konferenzen der Reihe nach mit „Ein Papier“ probieren, bis eine antwortet.
+
+### c) Land + Gremium + Konferenz
+1. Konferenz über den Titel aus `whoami` (z. B. „MUN-SH 2027“).
+2. Gremium über `findPapersGroupedByCommittee` (Name oder Kürzel).
+3. Land in den ISO-alpha-3-Code übersetzen (Deutschland → `deu`, Äthiopien → `eth`).
+4. Papiere des Gremiums laden und lokal nach `nationAlpha3Code` filtern:
 
 ```graphql
 {
   committeeAgendaItems(where: { committeeId: { eq: "<COMMITTEE>" } }) {
-    id title teaserText
-    submitted: papers(where: { status: SUBMITTED }) {
-      id type firstSubmittedAt
-      delegation { assignedRole { name nationAlpha3Code } }
-    }
-    revised: papers(where: { status: REVISED }) {
-      id type firstSubmittedAt
+    id title
+    papers(where: { type: POSITION_PAPER }) {
+      id type status updatedAt
       delegation { assignedRole { name nationAlpha3Code } }
     }
   }
 }
 ```
 
-## Nächstes Papier zur Korrektur
+Mehrere Treffer (mehrere Themen oder Typen) → nachfragen oder alle nehmen, wenn die Person
+„alle“ gesagt hat.
+
+### d) Nichts Bestimmtes → nächstes Papier eines Themas
+Ohne Typwunsch: die DELEGATOR-Logik direkt.
 
 ```graphql
 {
-  findNextPaperToReview(agendaItemId: "<AGENDA_ITEM>") {
-    id type status
-    delegation { assignedRole { name nationAlpha3Code } }
-    agendaItem { title teaserText committee { abbreviation } }
-    versions(orderBy: { version: desc }, limit: 1) { version status content }
+  findNextPaperToReview(agendaItemId: "<AGENDA_ITEM>") { id type status }
+}
+```
+
+Mit Typwunsch dieselbe Logik nachbauen (neue Einreichungen vor Überarbeitungen, jeweils
+das am längsten unberührte zuerst):
+
+```graphql
+{
+  committeeAgendaItems(where: { id: { eq: "<AGENDA_ITEM>" } }) {
+    submitted: papers(where: { type: POSITION_PAPER, status: SUBMITTED }, orderBy: { updatedAt: asc }, limit: 1) { id }
+    revised:   papers(where: { type: POSITION_PAPER, status: REVISED },   orderBy: { updatedAt: asc }, limit: 1) { id }
   }
 }
 ```
 
-## Ein Papier mit Versionsverlauf
+Erst `submitted`, sonst `revised`. Beides leer → „Für dieses Thema wartet kein Papier.“
+
+## Gremien und Themen einer Konferenz
+
+```graphql
+{
+  findPapersGroupedByCommittee(conferenceId: "<CONF>") { committee { id name abbreviation } }
+  committeeAgendaItems(where: { committeeId: { eq: "<COMMITTEE>" } }) { id title }
+}
+```
+
+## Ein Papier mit allen Versionen
 
 ```graphql
 {
   paper(id: "<PAPER>") {
-    id type status
-    delegation { assignedRole { name nationAlpha3Code } }
-    agendaItem { title teaserText committee { abbreviation } }
+    id type status firstSubmittedAt updatedAt
+    delegation { assignedRole { name nationAlpha3Code kind } }
+    agendaItem { id title teaserText committee { name abbreviation } }
     versions(orderBy: { version: desc }) {
       version status createdAt content
       reviews { statusBefore statusAfter createdAt }
@@ -79,9 +113,9 @@ Status: `DRAFT` → `SUBMITTED` → `CHANGES_REQUESTED` → `REVISED` → … �
 }
 ```
 
-Für das Skript die Antwort in eine Datei schreiben (z. B. im Scratchpad) und den Pfad
-übergeben; das Skript nimmt die erste Version mit TipTap-Inhalt, also die neueste, wenn
-absteigend sortiert.
+Bei sehr vielen Versionen reicht `versions(orderBy: { version: desc }, limit: 2)` für
+neueste Version und Vorversion; den Verlauf (Anzahl Versionen, Review-Zeitpunkte) dann
+separat ohne `content` abfragen.
 
 Wenn eine Abfrage mit einem Feld- oder Filterfehler scheitert, schlag den Typ mit
-`graphql_schema` nach und korrigiere die Abfrage, statt zu raten.
+`graphql_schema` nach und korrigiere sie, statt zu raten.

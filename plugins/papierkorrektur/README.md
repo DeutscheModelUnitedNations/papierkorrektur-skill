@@ -1,6 +1,6 @@
 # papierkorrektur
 
-Skill für Claude, der MUN-Papiere (Positions-, Arbeits- und Einführungspapiere) aus dem
+Skill für Claude, der MUN-Positions- und Arbeitspapiere aus dem
 MUNIFY DELEGATOR über dessen MCP-Server (https://delegator.munify.cloud/mcp) liest, nach
 festen Kriterien bewertet und Feedback für Vorsitzende schreibt, inklusive einer Empfehlung
 (ACCEPTED oder CHANGES_REQUESTED). Claude ändert nichts im DELEGATOR; die vorsitzende Person

@@ -1,7 +1,7 @@
 {
   "name": "papierkorrektur",
-  "version": "0.1.0",
-  "description": "Korrigiert Positions-, Arbeits- und Einführungspapiere aus dem MUNIFY DELEGATOR per MCP und schreibt Feedback für die Vorsitzenden.",
+  "version": "0.2.0",
+  "description": "Korrigiert Positions- und Arbeitspapiere aus dem MUNIFY DELEGATOR: Gremientext aus guide.dmun.de, Bewertung nach DMUN-Korrekturleitfaden, kommentiertes Claude-Doc mit Klassifikation und Feedback-Text.",
   "author": {
     "name": "Tade Strehk"
   },
