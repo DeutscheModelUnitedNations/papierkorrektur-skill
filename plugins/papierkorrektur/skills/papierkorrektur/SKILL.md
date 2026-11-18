@@ -86,6 +86,9 @@ Bewerte nach dem [Korrekturleitfaden](references/korrekturleitfaden.md):
 - Notiere **alle** Befunde, wähle die **~3 wichtigsten als Kernpunkte** und 1–2 konkrete Stärken.
 - Maßstab: Erstannahme ist selten (ca. 5–15 %). Bei Zweitkorrekturen zählt vor allem, ob
   die früheren Punkte umgesetzt sind; dann darf der Maßstab sinken.
+- **Sichtbare Mühe zählt:** Merkt man dem Papier an, dass ernsthaft Arbeit hineingeflossen
+  ist (eigene Recherche, durchdachte Vorschläge, sorgfältige Ausarbeitung), darf es
+  angenommen werden, auch wenn noch Punkte offen sind. Die stehen dann als „Optional“ dabei.
 - Fakten nur bemängeln, wenn du sicher bist; sonst als Frage formulieren.
 - KI-Verdacht nie als Tatsache: als `⚠ Warnung` mit konkreten Anzeichen, Entscheidung bei
   der vorsitzenden Person.
@@ -100,12 +103,14 @@ Klassifikation:
 - **Bitte überarbeiten** – ein Kernpunkt verhindert, dass das Papier eine tragfähige
   Grundlage für die Konferenz ist (z. B. < 3 Diskussionspunkte, keine konkreten Maßnahmen,
   falsche Perspektive, grobe Formfehler beim Arbeitspapier).
-- **Akzeptiert** – trägt; kleinere Wünsche stehen als „Optional“ dabei.
+- **Akzeptiert** – trägt, oder es steckt sichtbar Mühe drin und die offenen Punkte sind
+  nicht grundlegend; Wünsche stehen als „Optional“ dabei. Im Zweifel bei einem
+  erkennbar engagierten Papier: annehmen.
 
 ## Schritt 3 – Feedback-Text
 
 Nach [feedback-vorlage.md](references/feedback-vorlage.md), aus den Kommentaren und der
-Klassifikation: Anrede, konkretes Lob, die ~3 Kernpunkte mit wörtlichen Blockzitaten, je
+Klassifikation: Anrede „Ehrenwerte Delegation <Staat>,“, durchgehend Siezen, konkretes Lob, die ~3 Kernpunkte mit wörtlichen Blockzitaten, je
 mit Warum und Vorschlag, keine Signatur. Er ist der letzte Abschnitt des Docs.
 
 Prüfe jedes Zitat vor dem Schreiben gegen den Papiertext (exakt gleich, keine Marker).

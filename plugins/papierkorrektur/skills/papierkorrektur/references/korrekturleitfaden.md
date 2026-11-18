@@ -12,6 +12,9 @@ Fehler und passende Textbausteine“ sind im Original noch in Arbeit und fehlen 
   Manche Papiere bekommen dadurch kleinteiliges, andere eher grobes Feedback – das ist gewollt.
 - **Erstannahme ist selten:** je nach Thema und Teilnehmenden werden nur ca. 5–15 % der
   Papiere im ersten Anlauf angenommen.
+- **Ergänzung der Projektleitung:** Ist erkennbar viel Mühe in ein Papier geflossen, darf
+  es angenommen werden, auch wenn es noch nicht alle Punkte erfüllt. Offene Punkte gehen
+  dann als freundliche Anregungen ins Feedback.
 - **Zweitkorrektur:** Sind keine neuen Fehler hinzugekommen, nur prüfen, ob die Punkte aus
   dem Erstfeedback umgesetzt sind. Sind sie zufriedenstellend erfüllt, wird angenommen.
   Der Maßstab sinkt im zweiten Anlauf auf ein individuelles Niveau, abhängig vom

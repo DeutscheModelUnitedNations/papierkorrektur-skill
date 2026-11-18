@@ -5,9 +5,10 @@ werden dort zu Zitaten mit „Im Papier finden“.
 
 ## Regeln
 
-- **Anrede:** „Liebe Delegation <Staat im Genitiv / von Staat>,“ – z. B. „Liebe Delegation
-  Kenias,“ oder „Liebe Delegation von Kenia,“. NA: „Liebe Vertretung von <Name>,“.
-  Siezen oder Duzen: Duzen (wie bei DMUN-Konferenzen üblich), außer die Person sagt anderes.
+- **Anrede:** immer „Ehrenwerte Delegation <Staat>,“ – z. B. „Ehrenwerte Delegation Kenia,“.
+  Bei NA dieselbe Form mit dem Namen des Akteurs.
+- **Siezen, durchgehend:** „Sie“, „Ihr Papier“, „Ihre Delegation“. Nie duzen, auch nicht in
+  Zitaten-Überleitungen oder im Schlusssatz.
 - **Keine Signatur**, kein Gruß mit Namen. Ein kurzer motivierender Schlusssatz ist okay.
 - **Erst konkretes Lob** (1–2 Punkte, keine Floskel; z. B. Stil, gelungener Abschnitt,
   Idee, Recherche, Stand der Vorbereitung) – mit Zitat, wenn es hilft.
@@ -21,7 +22,7 @@ werden dort zu Zitaten mit „Im Papier finden“.
 - Bei **Bitte überarbeiten**: klar sagen, dass eine Überarbeitung nötig ist, und dass
   man sich auf die neue Version freut.
 - Bei Zweitkorrekturen: auf die Punkte des letzten Feedbacks eingehen (umgesetzt / noch offen).
-- Sprache: einfach, freundlich, auf Augenhöhe mit Schülerinnen und Schülern; Sätze < 25 Wörter.
+- Sprache: einfach, freundlich, respektvoll im Sie; Sätze < 25 Wörter.
 - Länge: etwa 150–300 Wörter ohne Zitate.
 - Nie die interne Checkliste, Etiketten („Kernpunkt 1“), Prozentwerte oder den Verdacht
   „KI-generiert“ in den Feedback-Text schreiben – ein KI-Verdacht ist Sache der vorsitzenden Person.
@@ -37,28 +38,28 @@ werden dort zu Zitaten mit „Im Papier finden“.
 ## Muster
 
 ```markdown
-Liebe Delegation Musterlands,
+Ehrenwerte Delegation Musterland,
 
-vielen Dank für dein Positionspapier! Besonders gelungen finden wir, wie konkret du die
-Ausgangslage in deinem Land beschreibst:
+vielen Dank für Ihr Positionspapier! Besonders gelungen finden wir, wie konkret Sie die
+Ausgangslage in Ihrem Land beschreiben:
 
 > Seit 2021 finanziert unsere Regierung mobile Gerichte in den ländlichen Provinzen.
 
-Damit zeigst du, dass du gut recherchiert hast.
+Damit zeigen Sie, dass Sie gut recherchiert haben.
 
-Damit dein Papier eine starke Grundlage für die Verhandlungen wird, bitten wir dich um drei
+Damit Ihr Papier eine starke Grundlage für die Verhandlungen wird, bitten wir Sie um drei
 Überarbeitungen:
 
-**1. Konkrete Maßnahmen auf internationaler Ebene.** Du schreibst:
+**1. Konkrete Maßnahmen auf internationaler Ebene.** Sie schreiben:
 
 > Die internationale Gemeinschaft sollte mehr Geld bereitstellen.
 
-Das ist ein guter Anfang, bleibt aber allgemein. Auf der Konferenz brauchst du Vorschläge,
+Das ist ein guter Anfang, bleibt aber allgemein. Auf der Konferenz brauchen Sie Vorschläge,
 die man in eine Resolution schreiben kann: Wer soll was tun, mit welchem Ziel? …
 
 **2. …**
 
 **3. …**
 
-Wir freuen uns auf deine überarbeitete Version!
+Wir freuen uns auf Ihre überarbeitete Version!
 ```
