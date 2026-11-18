@@ -1,0 +1,20 @@
+{
+  "name": "papierkorrektur",
+  "owner": {
+    "name": "Tade Strehk"
+  },
+  "metadata": {
+    "description": "Plugins für die Korrektur von MUN-Papieren mit Claude und dem MUNIFY DELEGATOR.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "papierkorrektur",
+      "source": "./plugins/papierkorrektur",
+      "description": "Korrigiert Positions-, Arbeits- und Einführungspapiere aus dem MUNIFY DELEGATOR per MCP und schreibt Feedback für die Vorsitzenden.",
+      "version": "0.1.0",
+      "category": "productivity",
+      "keywords": ["mun", "munify", "delegator", "positionspapier", "korrektur", "mcp"]
+    }
+  ]
+}

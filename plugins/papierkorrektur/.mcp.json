@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "munify-delegator": {
+      "type": "http",
+      "url": "https://delegator.munify.cloud/mcp"
+    }
+  }
+}

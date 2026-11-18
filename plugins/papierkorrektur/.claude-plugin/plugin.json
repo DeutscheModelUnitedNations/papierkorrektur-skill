@@ -1,0 +1,17 @@
+{
+  "name": "papierkorrektur",
+  "version": "0.1.0",
+  "description": "Korrigiert Positions-, Arbeits- und Einführungspapiere aus dem MUNIFY DELEGATOR per MCP und schreibt Feedback für die Vorsitzenden.",
+  "author": {
+    "name": "Tade Strehk"
+  },
+  "keywords": [
+    "mun",
+    "munify",
+    "delegator",
+    "positionspapier",
+    "korrektur",
+    "mcp"
+  ],
+  "license": "MIT"
+}
