@@ -22,10 +22,11 @@ plugins/papierkorrektur/
 
 ## Installation
 
-In Claude Code, sobald das Repo auf GitHub liegt (`<owner>/<repo>` ersetzen):
+In Claude Code (das Repo ist privat, also braucht es Zugriff auf die GitHub-Organisation
+DeutscheModelUnitedNations):
 
 ```
-/plugin marketplace add <owner>/<repo>
+/plugin marketplace add DeutscheModelUnitedNations/papierkorrektur-skill
 /plugin install papierkorrektur@papierkorrektur
 ```
 

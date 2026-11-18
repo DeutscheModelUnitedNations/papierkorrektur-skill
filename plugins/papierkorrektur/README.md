@@ -7,5 +7,12 @@ festen Kriterien bewertet und Feedback für Vorsitzende schreibt, inklusive eine
 trägt das Feedback selbst ein. Aufruf zum Beispiel mit „Korrigier das nächste Positionspapier
 im Menschenrechtsrat“ oder direkt über `/papierkorrektur:papierkorrektur`.
 
+Installation in Claude Code:
+
+```
+/plugin marketplace add DeutscheModelUnitedNations/papierkorrektur-skill
+/plugin install papierkorrektur@papierkorrektur
+```
+
 Voraussetzung: Anmeldung im DELEGATOR beim ersten Aufruf und freigeschaltete KI-Assistenten
 für die Konferenz. Weitere Details im README des Repositorys.
