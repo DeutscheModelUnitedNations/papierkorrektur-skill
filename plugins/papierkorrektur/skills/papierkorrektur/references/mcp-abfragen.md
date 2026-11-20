@@ -1,7 +1,8 @@
 # MCP-Abfragen für den MUNIFY DELEGATOR
 
-Werkzeuge: `whoami`, `graphql_schema`, `graphql_query` (Präfix je nach Installation).
-Alle Abfragen laufen über `graphql_query` mit `conferenceId`. Getestet 2026-11.
+Werkzeuge: `whoami`, `graphql_schema`, `graphql_query` (Präfix je nach Installation), dazu
+das Werkzeug für **Korrekturentwürfe** (siehe unten). Alle Abfragen laufen über
+`graphql_query` mit `conferenceId`. Getestet 2026-11.
 
 ## Gotchas
 
@@ -159,3 +160,21 @@ ohne Bewertung). Verglichen wird immer mit der zuletzt bewerteten Version.
 
 Wenn eine Abfrage mit einem Feld- oder Filterfehler scheitert, schlag den Typ mit
 `graphql_schema` nach und korrigiere sie, statt zu raten.
+
+## Korrekturentwurf anlegen
+
+Der DELEGATOR-MCP hat ein Werkzeug, das einen **Korrekturentwurf** (Review-Entwurf) zu einem
+Papier schreibt. Abgeschickt wird der Entwurf erst von der vorsitzenden Person im DELEGATOR.
+Nur in SKILL.md, Schritt 5 benutzen – nach Zustimmung.
+
+- Werkzeug in der Werkzeugliste des DELEGATOR-Servers suchen (Name enthält in der Regel
+  „draft“/„Entwurf“ und „review“). Den genauen Namen nicht raten.
+- **Eingabeschema lesen**, bevor du es aufrufst: welche IDs es braucht (`paperId`, ggf.
+  `conferenceId` oder Version), in welchem Format der Text erwartet wird (Markdown, HTML,
+  TipTap-JSON) und ob es eine Statusempfehlung (`ACCEPTED` / `CHANGES_REQUESTED`) nimmt.
+  Text im verlangten Format übergeben; Blockzitate bleiben Zitate (in HTML `<blockquote>`,
+  in TipTap `blockquote`-Knoten), Grußformel nach feedback-vorlage.md.
+- Gehört der Entwurf zu einer Version, die **bewertete Version** übergeben (die neueste).
+- Fehler `FORBIDDEN`/fehlende Rechte: Die Person darf für dieses Gremium keine Reviews
+  schreiben oder KI-Assistenten sind nicht freigeschaltet – sagen, nicht wiederholen.
+- Nach dem Anlegen den Deeplink zur Korrekturseite nennen; dort liegt der Entwurf.

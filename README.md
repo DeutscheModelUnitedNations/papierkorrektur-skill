@@ -3,8 +3,10 @@
 Claude-Plugin-Marketplace mit einem Skill, der MUN-Positions- und Arbeitspapiere aus dem
 [MUNIFY DELEGATOR](https://delegator.munify.cloud) per MCP liest, den Gremientext aus
 [guide.dmun.de](https://guide.dmun.de) holt, nach dem DMUN-Korrekturleitfaden bewertet und
-pro Papier ein Claude-Doc mit kommentiertem Papiertext, Klassifikation und Feedback-Text anlegt. Claude ändert dabei nichts im DELEGATOR:
-Das Feedback trägt die vorsitzende Person selbst ein.
+pro Papier ein Claude-Doc mit kommentiertem Papiertext, Klassifikation und Feedback-Text anlegt.
+Unsichere Einschätzungen markiert Claude dort per Kommentar. Nach dem Drüberschauen legt Claude
+auf Wunsch den (ggf. angepassten) Feedback-Text mit Grußformel als Korrekturentwurf im DELEGATOR
+an; abschicken und Status setzen tut die vorsitzende Person selbst.
 
 ## Aufbau
 
