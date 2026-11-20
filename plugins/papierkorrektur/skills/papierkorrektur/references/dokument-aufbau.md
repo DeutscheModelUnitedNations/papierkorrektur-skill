@@ -67,6 +67,7 @@ einem Etikett:
 - `Lob:` – konkrete Stärke, die im Feedback auftaucht
 - `⚠ Warnung:` – schwerer Mangel (Faktenfehler, falsche Perspektive, Anzeichen für KI-Text,
   Pflichtteil fehlt)
+- `? Unsicher:` – du bist dir bei der Einschätzung nicht sicher (siehe „Unsicherheiten“)
 
 Ist eine Warnung zugleich Kernpunkt, beides kombinieren: `⚠ Warnung (Kernpunkt 1): …`.
 
@@ -76,6 +77,8 @@ sind kurz (Karte ~40 Zeichen breit, ≤ 4 Zeilen).
 **Warnmarker im Text.** Für jede `⚠ Warnung` zusätzlich am **Ende des betroffenen
 Absatzes** ` **[⚠ <2–4 Wörter>]**` anhängen (z. B. „**[⚠ Faktenfehler: Mitgliedschaft]**“).
 Nie mitten in einen Satz – sonst stimmen Zitate nicht mehr.
+
+Unsicherheit lässt sich mit den anderen Etiketten kombinieren: `? Unsicher (Kernpunkt 2): …`.
 
 Fehlt etwas ganz (z. B. kein Diskussionspunkt behandelt), kommt der Kommentar an die
 Abschnittsüberschrift oder an den ersten Satz des Papiers.
@@ -102,9 +105,36 @@ Eine Zeile, fett, dann 1–2 Sätze Begründung:
 werden.“, dann der Text nach `feedback-vorlage.md`. Wörtliche Zitate als Markdown-Blockzitate
 (`> …`), damit sie beim Kopieren als Zitat im DELEGATOR ankommen.
 
+## Unsicherheiten
+
+Jede Stelle, bei der du nicht sicher bist, bekommt einen Kommentar `? Unsicher: …` – so
+sieht die vorsitzende Person beim Drüberschauen sofort, wo sie selbst urteilen muss.
+Typische Fälle:
+- Fakt im Papier, den du nicht sicher prüfen kannst (Zahl, Mitgliedschaft, Abstimmungsverhalten),
+- Diskussionspunkt nur teilweise oder nur indirekt behandelt,
+- Stelle, die man so oder so lesen kann (Perspektive, Ironie, Tippfehler oder Absicht),
+- Grenzfall bei der Klassifikation („knapp überarbeiten“ / „knapp akzeptiert“),
+- Gremientext nur sinngemäß (WebFetch) oder nicht ganz passend zum Thema.
+
+Inhalt: **was** unsicher ist, **warum**, und **was** die Person prüfen oder entscheiden
+sollte – kurz, ≤ 4 Zeilen.
+
+Wo verankern:
+- am Papiertext (wie die anderen Kommentare, `"nth": 1`), wenn es um eine Stelle im Papier geht;
+- an der Zeile in der **Checkliste**, am Eintrag bei den **Diskussionspunkten** oder an der
+  **Klassifikation**, wenn die Bewertung selbst unsicher ist;
+- an einem Satz im **Feedback-Text**, wenn eine Formulierung dort auf einer unsicheren
+  Annahme beruht. Anker dann aus deinem eigenen Text (nicht aus einem Blockzitat), damit
+  er eindeutig ist; sonst das richtige `nth` wählen.
+
+Keine Unsicherheit erfinden, um vorsichtig zu wirken – nur echte Zweifel. Im Feedback-Text
+selbst taucht das Etikett nie auf.
+
 ## Fallback ohne Claude Docs
 
 Gibt es keinen Docs-Server, schreib dieselbe Struktur als Markdown-Datei in den
 Arbeitsordner: `korrektur-<land>-<gremium>-<typ>-v<N>.md` (ASCII, klein, Bindestriche).
 Kommentare werden zu Fußnoten direkt hinter der Stelle (`[^k1]`, Text mit demselben Etikett
-am Ende des Abschnitts „Papiertext“); Warnmarker wie oben. Im Chat den Pfad nennen.
+am Ende des Abschnitts „Papiertext“; `? Unsicher:` an Bewertung oder Feedback-Text am Ende
+des jeweiligen Abschnitts); Warnmarker wie oben. In Schritt 5 die Datei statt des Docs neu
+lesen. Im Chat den Pfad nennen.

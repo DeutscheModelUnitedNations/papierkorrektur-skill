@@ -9,7 +9,8 @@ werden dort zu Zitaten mit „Im Papier finden“.
   Bei NA dieselbe Form mit dem Namen des Akteurs.
 - **Siezen, durchgehend:** „Sie“, „Ihr Papier“, „Ihre Delegation“. Nie duzen, auch nicht in
   Zitaten-Überleitungen oder im Schlusssatz.
-- **Keine Signatur**, kein Gruß mit Namen. Ein kurzer motivierender Schlusssatz ist okay.
+- **Im Doc keine Signatur.** Ein kurzer motivierender Schlusssatz ist okay. Die Grußformel
+  mit Name und Rolle kommt erst beim Anlegen des Entwurfs dazu (siehe unten).
 - **Erst konkretes Lob** (1–2 Punkte, keine Floskel; z. B. Stil, gelungener Abschnitt,
   Idee, Recherche, Stand der Vorbereitung) – mit Zitat, wenn es hilft.
 - **Dann die ~3 Kernpunkte**, je:
@@ -66,3 +67,19 @@ die man in eine Resolution schreiben kann: Wer soll was tun, mit welchem Ziel? �
 
 Wir freuen uns auf Ihre überarbeitete Version!
 ```
+
+## Grußformel im Entwurf
+
+Beim Anlegen des Korrekturentwurfs im DELEGATOR (SKILL.md, Schritt 5) hängst du nach dem
+Schlusssatz und einer Leerzeile an:
+
+```markdown
+Mit freundlichen Grüßen,
+<Vorname Nachname>
+<Rolle>
+```
+
+Jede Zeile eine eigene Zeile im Editor. Erwartet das Werkzeug HTML, mit `<br/>` trennen:
+`Mit freundlichen Grüßen,<br/>Erika Mustermann<br/>Vorsitz Menschenrechtsrat`. In Markdown
+harte Zeilenumbrüche nutzen (eigene Absätze oder zwei Leerzeichen am Zeilenende), sonst
+läuft alles in eine Zeile. Name und Rolle so übernehmen, wie die Person sie angegeben hat.
