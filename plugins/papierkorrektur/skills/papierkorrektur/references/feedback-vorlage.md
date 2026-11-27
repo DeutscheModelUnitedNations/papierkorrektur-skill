@@ -3,7 +3,11 @@
 Der Text geht direkt an die Delegation. Er wird in den DELEGATOR kopiert; Blockzitate
 werden dort zu Zitaten mit „Im Papier finden“.
 
-## Regeln
+Erst stehen Inhalt und Bewertung fest (Kernpunkte, Lob, Zitate, Klassifikation aus
+Schritt 2), dann wählst du die Form ([feedback-formen.md](feedback-formen.md)). Die festen
+Regeln gelten in jeder Form. Frei ist nur, wie der Text gebaut ist.
+
+## Feste Regeln (in jeder Form)
 
 - **Anrede:** immer „Ehrenwerte Delegation <Staat>,“ – z. B. „Ehrenwerte Delegation Kenia,“.
   Bei NA dieselbe Form mit dem Namen des Akteurs.
@@ -11,22 +15,36 @@ werden dort zu Zitaten mit „Im Papier finden“.
   Zitaten-Überleitungen oder im Schlusssatz.
 - **Im Doc keine Signatur.** Ein kurzer motivierender Schlusssatz ist okay. Die Grußformel
   mit Name und Rolle kommt erst beim Anlegen des Entwurfs dazu (siehe unten).
-- **Erst konkretes Lob** (1–2 Punkte, keine Floskel; z. B. Stil, gelungener Abschnitt,
+- **Konkretes Lob** (1–2 Punkte, keine Floskel; z. B. Stil, gelungener Abschnitt,
   Idee, Recherche, Stand der Vorbereitung) – mit Zitat, wenn es hilft.
-- **Dann die ~3 Kernpunkte**, je:
-  1. was gemeint ist – mit **wörtlichem Zitat** der Stelle als Blockzitat,
-  2. **warum** es wichtig ist / **wofür** man es auf der Konferenz braucht,
-  3. ein konkreter Vorschlag, was zu tun ist.
-  Bei fehlenden Inhalten statt Zitat sagen, wo es hingehört.
-- Bei **Akzeptiert**: Glückwunsch, Lob, und die optionalen Wünsche als freundliche
-  Anregungen für die Konferenz („Für die Debatte könnte helfen …“).
-- Bei **Bitte überarbeiten**: klar sagen, dass eine Überarbeitung nötig ist, und dass
-  man sich auf die neue Version freut.
-- Bei Zweitkorrekturen: auf die Punkte des letzten Feedbacks eingehen (umgesetzt / noch offen).
-- Sprache: einfach, freundlich, respektvoll im Sie; Sätze < 25 Wörter.
-- Länge: etwa 150–300 Wörter ohne Zitate.
-- Nie die interne Checkliste, Etiketten („Kernpunkt 1“), Prozentwerte oder den Verdacht
-  „KI-generiert“ in den Feedback-Text schreiben – ein KI-Verdacht ist Sache der vorsitzenden Person.
+- **Die ~3 Kernpunkte**, jeder mit allen drei Teilen:
+  - was gemeint ist – mit **wörtlichem Zitat** der Stelle als Blockzitat
+    (bei fehlenden Inhalten statt Zitat sagen, wo es hingehört),
+  - **warum** es wichtig ist / **wofür** man es auf der Konferenz braucht,
+  - ein **konkreter Vorschlag**, was zu tun ist.
+- **Klassifikation klar erkennbar:**
+  - Bei **Akzeptiert**: Glückwunsch zur Annahme, Lob, und die optionalen Wünsche als
+    freundliche Anregungen für die Konferenz.
+  - Bei **Bitte überarbeiten**: klar sagen, dass eine Überarbeitung nötig ist, und dass
+    man sich auf die neue Version freut.
+- Bei **Zweitkorrekturen**: auf die Punkte des letzten Feedbacks eingehen (umgesetzt / noch offen).
+- Sprache: einfach, freundlich, respektvoll im Sie; **Sätze < 25 Wörter**.
+- Länge: etwa **150–300 Wörter ohne Zitate**.
+- Nie die interne Checkliste, Etiketten („Kernpunkt 1“), Prozentwerte, den Namen der
+  Feedback-Form oder den Verdacht „KI-generiert“ in den Feedback-Text schreiben – ein
+  KI-Verdacht ist Sache der vorsitzenden Person.
+- Die Zitatregeln unten gelten immer.
+
+## Frei (Sache der Form)
+
+- **Reihenfolge von Lob und Kernpunkten.** Das Lob darf am Anfang stehen, in die Punkte
+  eingewoben sein oder später kommen.
+- **Gliederung:** Nummerierung, Fettungen, Zwischenüberschriften oder reiner Fließtext.
+- **Reihenfolge innerhalb eines Kernpunkts**, z. B. erst Warum, dann Zitat, dann Vorschlag.
+- **Einstieg und Schlusssatz.**
+
+Die Formen, Einstiege, Schlüsse und die Liste abgenutzter Wendungen stehen in
+[feedback-formen.md](feedback-formen.md).
 
 ## Zitate
 
@@ -39,7 +57,12 @@ werden dort zu Zitaten mit „Im Papier finden“.
   11/2026). Ein als reiner Text eingefügtes `> ` bliebe dagegen Text – dann die Zeile
   markieren und im Editor als Zitat formatieren.
 
-## Muster
+## Beispiel für die Form Klassisch, keine Vorlage
+
+Ein Beispiel unter mehreren: So sieht ein Text in der Form **Klassisch** aus. Übernimm
+weder Aufbau noch Sätze, wenn eine andere Form gezogen wurde. Mehrere der Wendungen hier
+stehen in feedback-formen.md unter „Abgenutzte Wendungen“. Kurze Beispiele für die anderen
+Formen stehen dort.
 
 ```markdown
 Ehrenwerte Delegation Musterland,

@@ -21,8 +21,9 @@ plugins/papierkorrektur/
     references/gremientext.md            # Gremientext und Punkte zur Diskussion aus dem DELEGATOR
     references/mcp-abfragen.md           # getestete GraphQL-Abfragen, Deeplinks
     references/dokument-aufbau.md        # Aufbau des Korrektur-Docs
-    references/feedback-vorlage.md       # Feedback-Text an die Delegation
-    scripts/papiertext.py                # Papier-JSON → Text, Wortzahlen, Formalprüfung, Versionsvergleich
+    references/feedback-vorlage.md       # Feedback-Text an die Delegation: feste Regeln, Zitate
+    references/feedback-formen.md        # Formen, Einstiege, Schlüsse (vom Skript gelesen), abgenutzte Wendungen
+    scripts/papiertext.py                # Papier-JSON → Text, Wortzahlen, Formalprüfung, Versionsvergleich; --form
 scripts/lint_skill.py                    # Skill-Lint (Versionen, Frontmatter, Verweise)
 tests/                                   # Tests für papiertext.py mit Beispielpapieren
 .github/workflows/lint.yml               # CI: plugin validate, Skill-Lint, Tests
@@ -59,6 +60,10 @@ claude plugin validate .
 
 ```bash
 python3 plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py antwort.json --diff
+```
+
+```bash
+python3 plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py --form --klassifikation ueberarbeiten --seed 1
 ```
 
 Vor dem Push (läuft auch in der CI, `.github/workflows/lint.yml`):

@@ -13,7 +13,8 @@ eine Mini-Zusammenfassung.
 Lies vor der ersten Korrektur einer Sitzung:
 - [references/korrekturleitfaden.md](references/korrekturleitfaden.md) – Maßstab, Checklisten, Vorgehen
 - [references/dokument-aufbau.md](references/dokument-aufbau.md) – was ins Doc kommt
-- [references/feedback-vorlage.md](references/feedback-vorlage.md) – der Feedback-Text und die Grußformel im Entwurf
+- [references/feedback-vorlage.md](references/feedback-vorlage.md) – der Feedback-Text: feste Regeln, Zitate, Grußformel im Entwurf
+- [references/feedback-formen.md](references/feedback-formen.md) – Formen, Einstiege und Schlüsse für den Feedback-Text, abgenutzte Wendungen
 
 Bei Bedarf: [references/mcp-abfragen.md](references/mcp-abfragen.md) (getestete GraphQL-Abfragen,
 Deeplinks) und [references/gremientext.md](references/gremientext.md) (Gremientext und Punkte
@@ -143,12 +144,34 @@ Klassifikation:
 
 ## Schritt 3 – Feedback-Text
 
-Nach [feedback-vorlage.md](references/feedback-vorlage.md), aus den Kommentaren und der
-Klassifikation: Anrede „Ehrenwerte Delegation <Staat>,“, durchgehend Siezen, konkretes Lob, die ~3 Kernpunkte mit wörtlichen Blockzitaten, je
-mit Warum und Vorschlag. Im Doc ohne Signatur – die Grußformel kommt erst beim Anlegen des
-Entwurfs dazu (Schritt 5). Er ist der letzte Abschnitt des Docs.
+Inhalt und Bewertung stehen vor der Form fest. Variiert wird nur, wie der Text gebaut ist –
+sonst klingt jedes Feedback gleich.
 
-Prüfe jedes Zitat vor dem Schreiben gegen den Papiertext (exakt gleich, keine Marker).
+1. **Inhalt steht fest:** Kernpunkte, Lob, Zitate und Klassifikation aus Schritt 2. Daran
+   ändert die Form nichts.
+2. **Form ziehen:**
+   ```bash
+   python3 <skill-ordner>/scripts/papiertext.py --form --klassifikation ueberarbeiten --ausser leitfragen,klassisch
+   ```
+   `--klassifikation akzeptiert|ueberarbeiten` nach Schritt 2. Unter `--ausser` alle Formen,
+   die du in dieser Sitzung schon benutzt hast. Das Skript gibt Form, Einstieg und Schluss aus.
+   Ohne Shell wählst du selbst eine Form, die in der Sitzung noch nicht vorkam, und nicht
+   Klassisch, wenn sie schon dran war.
+3. **Passt die Form offensichtlich nicht** zum Papier (feedback-formen.md, „passt nicht“),
+   einmal neu ziehen, mit der unpassenden Form zusätzlich unter `--ausser`, und das in einem
+   Halbsatz begründen. Nicht einfach auf Klassisch zurückfallen.
+4. **Zwei erste Sätze skizzieren** (nur für dich, nach dem gezogenen Einstieg) und den nehmen,
+   der näher am konkreten Papier ist.
+5. **Text schreiben** nach den festen Regeln in [feedback-vorlage.md](references/feedback-vorlage.md)
+   und dem Gerüst der Form in [feedback-formen.md](references/feedback-formen.md): Anrede
+   „Ehrenwerte Delegation <Staat>,“, durchgehend Siezen, konkretes Lob, die ~3 Kernpunkte mit
+   wörtlichen Blockzitaten, je mit Warum und Vorschlag, Klassifikation klar erkennbar.
+   Abgenutzte Wendungen meiden. Im Doc ohne Signatur – die Grußformel kommt erst beim Anlegen
+   des Entwurfs dazu (Schritt 5). Der Feedback-Text ist der letzte Abschnitt des Docs.
+6. **Zitate prüfen:** jedes Zitat gegen den Papiertext (exakt gleich, keine Marker).
+
+Die gewählte Form steht nicht im Feedback-Text, sondern als letzte Zeile im Abschnitt
+„Bewertung“ (dokument-aufbau.md), z. B. „Feedback-Form: Leitfragen“.
 
 Setze danach die `? Unsicher:`-Kommentare an Bewertung, Klassifikation und Feedback-Text,
 wo nötig (Unsicherheiten am Papiertext gehören schon zu den Kommentaren aus Schritt 2).
