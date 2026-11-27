@@ -36,11 +36,12 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python }}
+          enable-cache: false  # keine Abhängigkeiten, nichts zu cachen
       - name: Python-Version prüfen
-        run: python -c "import sys; v = '%d.%d' % sys.version_info[:2]; print(sys.version); assert v == '${{ matrix.python }}', v"
+        run: uv run --no-project python -c "import sys; v = '%d.%d' % sys.version_info[:2]; print(sys.version); assert v == '${{ matrix.python }}', v"
       - name: Skill-Lint
-        run: python scripts/lint_skill.py
+        run: uv run --no-project python scripts/lint_skill.py
       - name: papiertext.py kompilieren
-        run: python -m py_compile plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py
+        run: uv run --no-project python -m py_compile plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py
       - name: Tests
-        run: python -m unittest discover -s tests -v
+        run: uv run --no-project python -m unittest discover -s tests -v
