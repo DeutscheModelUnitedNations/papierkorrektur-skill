@@ -24,9 +24,11 @@ plugins/papierkorrektur/
     references/feedback-vorlage.md       # Feedback-Text an die Delegation: feste Regeln, Zitate
     references/feedback-formen.md        # Formen, Einstiege, Schlüsse (vom Skript gelesen), abgenutzte Wendungen
     scripts/papiertext.py                # Papier-JSON → Text, Wortzahlen, Formalprüfung, Versionsvergleich; --form
-scripts/lint_skill.py                    # Skill-Lint (Versionen, Frontmatter, Verweise)
-tests/                                   # Tests für papiertext.py mit Beispielpapieren
-.github/workflows/lint.yml               # CI: plugin validate, Skill-Lint, Tests
+scripts/lint_skill.py                    # Skill-Lint (Versionen, Frontmatter, Verweise; --tag)
+scripts/bump_version.py                  # Versionsnummer an allen Stellen setzen
+tests/                                   # Tests für papiertext.py, bump_version.py und den Tag-Check
+.github/workflows/lint.yml               # CI: plugin validate, Skill-Lint, Tests; bei Tags: Tag = Version
+.github/workflows/release.yml            # Release: Bump-PR öffnen, nach dem Merge Tag + Release
 ```
 
 ## Installation
@@ -83,6 +85,33 @@ Verweise in den Markdown-Dateien des Skills auf vorhandene Dateien zeigen. Die T
 `tests/` prüfen `papiertext.py` gegen von Hand gebaute Beispielpapiere in `tests/fixtures/`.
 
 Offen: Abschnitte „Typische Fehler und Textbausteine“ des Korrekturleitfadens (im Original noch in Arbeit).
+
+## Release
+
+Die Version steht in `.claude-plugin/marketplace.json` (`metadata.version` und beim Plugin) und in
+`plugins/papierkorrektur/.claude-plugin/plugin.json`. Claude Code erkennt Updates an dieser Nummer,
+also gehört zu jedem Release ein Bump. Nicht von Hand ändern, sondern:
+
+1. Actions → **Release** → „Run workflow“, `patch`/`minor`/`major` wählen oder eine feste Version
+   eintragen. Der Workflow zählt hoch, lässt Lint und Tests laufen und öffnet den PR „Version X.Y.Z“
+   von `release/vX.Y.Z` gegen `main`.
+2. PR mergen.
+3. Der Push auf `main` legt Tag und GitHub-Release `vX.Y.Z` auf dem Merge-Commit an, mit
+   automatisch erzeugten Release Notes. Gibt es die Version schon, passiert nichts.
+
+Wird doch einmal ein Tag von Hand gepusht, prüft `lint.yml`, ob er zur Version in den Dateien passt.
+
+Voraussetzungen im Repo: Unter Settings → Actions → General muss „Allow GitHub Actions to create
+and approve pull requests“ an sein. Mit dem Standard-Token laufen am Bump-PR keine Checks
+(GitHub startet für Bot-Pushes keine Workflows). Abhilfe: das Secret `RELEASE_TOKEN` anlegen
+(fine-grained PAT oder App-Token mit `contents` und `pull-requests: write`) oder den PR einmal
+schließen und wieder öffnen.
+
+Lokal geht der Bump auch ohne CI:
+
+```bash
+python3 scripts/bump_version.py minor
+```
 
 ## Lizenz
 

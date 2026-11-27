@@ -7,7 +7,9 @@
 - Relative Verweise in allen Markdown-Dateien eines Skills zeigen auf vorhandene Dateien
   (Markdown-Links und Code-Spans wie `references/x.md` oder `<skill-ordner>/scripts/y.py`)
 
-Aufruf: python3 scripts/lint_skill.py [repo-wurzel]
+- Mit `--tag vX.Y.Z` (CI bei Tag-Push): der Tag passt zur Versionsnummer in den Dateien
+
+Aufruf: python3 scripts/lint_skill.py [--tag vX.Y.Z] [repo-wurzel]
 Nur Standardbibliothek. Exit-Code 1 bei Fehlern.
 """
 from __future__ import annotations
@@ -120,10 +122,21 @@ def check_links(md: Path, skill_dir: Path, root: Path) -> None:
 
 
 def main() -> int:
-    root = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent).resolve()
+    args = sys.argv[1:]
+    tag = None
+    if "--tag" in args:
+        i = args.index("--tag")
+        if i + 1 >= len(args):
+            print("Fehler: --tag braucht einen Wert, z. B. --tag v1.2.3")
+            return 2
+        tag = args[i + 1]
+        del args[i:i + 2]
+    root = Path(args[0] if args else Path(__file__).resolve().parent.parent).resolve()
     market_path = root / ".claude-plugin" / "marketplace.json"
     market = load_json(market_path)
     market_version = market.get("metadata", {}).get("version")
+    if tag is not None and tag != f"v{market_version}":
+        err(f"Tag {tag} passt nicht zur Version in marketplace.json ({market_version}), erwartet v{market_version}")
 
     for entry in market.get("plugins", []):
         pname = entry.get("name", "?")
