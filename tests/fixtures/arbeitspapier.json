@@ -1,0 +1,86 @@
+{
+ "preamble": [
+  {
+   "content": "in Anbetracht der Lage"
+  },
+  {
+   "content": "besorgt über die Entwicklung"
+  },
+  {
+   "content": "Erinnernd an frühere Resolutionen"
+  }
+ ],
+ "operative": [
+  {
+   "blocks": [
+    {
+     "type": "text",
+     "content": "fordert alle Staaten auf,"
+    },
+    {
+     "type": "subclauses",
+     "items": [
+      {
+       "blocks": [
+        {
+         "type": "text",
+         "content": "Programme zu fördern"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "type": "text",
+         "content": "Mittel bereitzustellen"
+        },
+        {
+         "type": "subclauses",
+         "items": [
+          {
+           "blocks": [
+            {
+             "type": "text",
+             "content": "insbesondere für Bildung"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "blocks": [
+    {
+     "type": "text",
+     "content": "begrüßt die Initiative"
+    }
+   ]
+  },
+  {
+   "content": "ermutigt die Mitgliedstaaten",
+   "subClauses": [
+    {
+     "content": "regional zu kooperieren",
+     "children": [
+      {
+       "content": "über Grenzen hinweg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "blocks": [
+    {
+     "type": "text",
+     "content": "beschließt, mit der Angelegenheit befasst zu bleiben"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  plugin:
+    name: Plugin validieren
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: claude plugin validate (Marketplace)
+        run: npx -y @anthropic-ai/claude-code@2.1.332 plugin validate .
+      - name: claude plugin validate (Plugin)
+        run: npx -y @anthropic-ai/claude-code@2.1.332 plugin validate plugins/papierkorrektur
+
+  skill:
+    name: Skill-Lint und Tests (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 3.9 = System-Python auf macOS, mit dem papiertext.py lokal oft läuft
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Skill-Lint
+        run: python scripts/lint_skill.py
+      - name: papiertext.py kompilieren
+        run: python -m py_compile plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py
+      - name: Tests
+        run: python -m unittest discover -s tests -v
