@@ -1,0 +1,129 @@
+name: Release
+
+# Ablauf:
+# 1. Actions → Release → „Run workflow“: zählt die Version hoch (patch/minor/major oder feste
+#    Nummer) und öffnet einen Bump-PR „Version X.Y.Z“ gegen main (main ist geschützt).
+# 2. PR mergen.
+# 3. Der Push auf main startet den Job „release“: Er sieht eine Version ohne Release, prüft den
+#    Lint gegen den künftigen Tag und legt Tag + GitHub-Release vX.Y.Z auf dem Merge-Commit an.
+#
+# Hinweis: PRs und Pushes mit dem Standard-GITHUB_TOKEN starten keine weiteren Workflows, die
+# Lint-Checks laufen am Bump-PR dann nicht von selbst. Mit einem Secret RELEASE_TOKEN
+# (fine-grained PAT oder App-Token mit contents + pull-requests: write) laufen sie normal.
+
+on:
+  workflow_dispatch:
+    inputs:
+      stufe:
+        description: "Was hochzählen?"
+        type: choice
+        options: [patch, minor, major]
+        default: minor
+      version:
+        description: "Oder feste Version X.Y.Z (überschreibt die Stufe)"
+        type: string
+        required: false
+  push:
+    branches: [main]
+    paths:
+      - .claude-plugin/marketplace.json
+      - plugins/*/.claude-plugin/plugin.json
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    name: Bump-PR öffnen
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+      ZIEL: ${{ inputs.version || inputs.stufe }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+          enable-cache: false
+      - name: Version hochzählen
+        id: bump
+        run: |
+          alt=$(uv run --no-project python scripts/bump_version.py --current)
+          neu=$(uv run --no-project python scripts/bump_version.py "$ZIEL")
+          echo "alt=$alt" >> "$GITHUB_OUTPUT"
+          echo "neu=$neu" >> "$GITHUB_OUTPUT"
+          echo "Version $alt → $neu"
+      - name: Skill-Lint
+        run: uv run --no-project python scripts/lint_skill.py --tag "v${{ steps.bump.outputs.neu }}"
+      - name: Tests
+        run: uv run --no-project python -m unittest discover -s tests -v
+      - name: Gibt es die Version schon?
+        env:
+          NEU: ${{ steps.bump.outputs.neu }}
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/v$NEU" >/dev/null; then
+            echo "::error::Tag v$NEU gibt es schon"; exit 1
+          fi
+          if git ls-remote --exit-code --heads origin "release/v$NEU" >/dev/null; then
+            echo "::error::Branch release/v$NEU gibt es schon – offenen Bump-PR mergen oder Branch löschen"; exit 1
+          fi
+      - name: Branch pushen und PR öffnen
+        env:
+          ALT: ${{ steps.bump.outputs.alt }}
+          NEU: ${{ steps.bump.outputs.neu }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git switch -c "release/v$NEU"
+          git commit -am "Version $NEU"
+          git push -u origin "release/v$NEU"
+          gh pr create --base main --head "release/v$NEU" --title "Version $NEU" --body "$(cat <<EOF
+          Setzt die Version von $ALT auf $NEU (\`marketplace.json\` und \`plugin.json\`).
+
+          Nach dem Merge legt der Workflow **Release** Tag und GitHub-Release \`v$NEU\` auf dem Merge-Commit an.
+
+          Angestoßen von ${GITHUB_ACTOR} über den Workflow „Release“.
+          EOF
+          )"
+
+  release:
+    name: Tag und Release anlegen
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+          enable-cache: false
+      - name: Version lesen
+        id: version
+        run: |
+          v=$(uv run --no-project python scripts/bump_version.py --current)
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          if gh release view "v$v" >/dev/null 2>&1 || git ls-remote --exit-code --tags origin "refs/tags/v$v" >/dev/null; then
+            echo "v$v ist schon veröffentlicht – nichts zu tun."
+            echo "neu=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "neu=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Skill-Lint (Tag passt zur Version)
+        if: steps.version.outputs.neu == 'true'
+        run: uv run --no-project python scripts/lint_skill.py --tag "v${{ steps.version.outputs.version }}"
+      - name: Release anlegen
+        if: steps.version.outputs.neu == 'true'
+        env:
+          V: ${{ steps.version.outputs.version }}
+        run: gh release create "v$V" --target "$GITHUB_SHA" --title "v$V" --generate-notes
