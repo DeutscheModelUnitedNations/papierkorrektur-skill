@@ -54,15 +54,14 @@ der vorsitzenden Person.
 ## Positionspapier
 
 Ein offizielles Statement der Regierung eines Staates bzw. der Vertretung einer
-nichtstaatlichen Organisation (NA), vergleichbar mit einer Pressemitteilung. Details für
-Teilnehmende stehen im DMUN-Guide unter „Positionspapier schreiben“.
+nichtstaatlichen Organisation (NA), vergleichbar mit einer Pressemitteilung.
 
 Orientierungsfragen für Teilnehmende:
 1. **Interessen:** Inwiefern berührt das Thema Interessen des vertretenen Staats / der Organisation?
 2. **Partnerschaften:** Welche Staaten / Organisationen stehen auf der eigenen Seite? Mitgliedschaft in relevanten Organisationen oder Abkommen?
 3. **Ausgangslage:** Welche Maßnahmen sind im Staat / in der Organisation bereits erfolgt?
 4. **Ziele und Interessenskonflikte:** Was soll erreicht, was verhindert werden? Wie wichtig ist jedes Ziel?
-5. **Lösungsvorschläge:** zu mindestens drei Diskussionspunkten aus dem Gremientext (gerne allen), mit Bezug zu eigenen Interessen.
+5. **Lösungsvorschläge:** zu mindestens drei Punkten zur Diskussion des Themas (gerne allen), mit Bezug zu eigenen Interessen.
 6. **Sonstiges:** weitere wichtige Aspekte.
 7. **Zusammenfassung:** die wichtigsten Aspekte in maximal 150 Wörtern.
 
@@ -87,8 +86,7 @@ den Absätzen herstellen. Fehlende Überschriften sind also kein Mangel – nur 
 
 Vereinfacht der Resolutionsentwurf einer Delegation: ein Best-Case-Szenario für das Land
 und Grundlage für die Arbeit auf der Konferenz. Deutlich formeller und starrer als das
-Positionspapier. Details für Teilnehmende im DMUN-Guide; dort steht auch die **Liste der
-zugelassenen Operatoren**.
+Positionspapier.
 
 Struktur – die ganze Resolution ergibt **einen langen Satz** (daher keine Großbuchstaben
 am Absatzanfang):

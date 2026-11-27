@@ -1,8 +1,8 @@
 # Papierkorrektur
 
 Claude-Plugin-Marketplace mit einem Skill, der MUN-Positions- und Arbeitspapiere aus dem
-[MUNIFY DELEGATOR](https://delegator.munify.cloud) per MCP liest, den Gremientext aus
-[guide.dmun.de](https://guide.dmun.de) holt, nach dem DMUN-Korrekturleitfaden bewertet und
+[MUNIFY DELEGATOR](https://delegator.munify.cloud) per MCP liest, Gremientext und Punkte zur Diskussion aus dem
+Vorbereitungsleitfaden des DELEGATOR holt, nach dem DMUN-Korrekturleitfaden bewertet und
 pro Papier ein Claude-Doc mit kommentiertem Papiertext, Klassifikation und Feedback-Text anlegt.
 Unsichere Einschätzungen markiert Claude dort per Kommentar. Nach dem Drüberschauen legt Claude
 auf Wunsch den (ggf. angepassten) Feedback-Text mit Grußformel als Korrekturentwurf im DELEGATOR
@@ -18,12 +18,11 @@ plugins/papierkorrektur/
   skills/papierkorrektur/
     SKILL.md                             # Ablauf und Regeln
     references/korrekturleitfaden.md     # Maßstab und Checklisten (Korrekturleitfaden MUN-SH 2027)
-    references/guide-dmun.md             # Gremientext auf guide.dmun.de finden
+    references/gremientext.md            # Gremientext und Punkte zur Diskussion aus dem DELEGATOR
     references/mcp-abfragen.md           # getestete GraphQL-Abfragen, Deeplinks
     references/dokument-aufbau.md        # Aufbau des Korrektur-Docs
     references/feedback-vorlage.md       # Feedback-Text an die Delegation
     scripts/papiertext.py                # Papier-JSON → Text, Wortzahlen, Formalprüfung, Versionsvergleich
-    scripts/guide.py                     # Gremientext wörtlich über die Ghost-API von guide.dmun.de
 ```
 
 ## Installation

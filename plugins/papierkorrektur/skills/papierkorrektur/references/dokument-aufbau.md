@@ -23,7 +23,7 @@ Danach die Abschnitte:
 Eine Tabelle (Feld | Wert):
 - Konferenz
 - Gremium (Name und Kürzel)
-- Thema – verlinkt auf die Guide-Seite, sonst „Gremientext: von <Quelle>“
+- Thema – verlinkt auf seine Seite im Leitfaden des DELEGATOR (gremientext.md), sonst „Gremientext: von der vorsitzenden Person“
 - Delegation (Staat/NA, alpha-3)
 - Papiertyp
 - Version: „<N> (von <N>)“ und Status der Version
@@ -88,10 +88,8 @@ Abschnittsüberschrift oder an den ersten Satz des Papiers.
   oder Abschnitt). Kriterien aus `korrekturleitfaden.md` – beim Arbeitspapier die
   ergänzende Checkliste plus die passenden Punkte der Positionspapier-Liste. Ergebnisse der
   automatischen Formalprüfung übernehmen.
-- **Diskussionspunkte:** Liste der „Punkte zur Diskussion“ aus dem Gremientext, je mit
-  „behandelt in Abschnitt …“ oder „nicht behandelt“. Wörtlich, wenn über API oder Browser
-  geholt (guide-dmun.md); kam der Text nur über WebFetch, über der Liste vermerken:
-  „sinngemäß nach Gremientext“.
+- **Diskussionspunkte:** Liste der „Punkte zur Diskussion“ wörtlich aus `discussionPoints`
+  (gremientext.md), je mit „behandelt in Abschnitt …“ oder „nicht behandelt“.
 - **Die drei Kernpunkte** als nummerierte Liste (dieselben wie in den Kommentaren).
 
 ### 5. Klassifikation
@@ -114,7 +112,7 @@ Typische Fälle:
 - Diskussionspunkt nur teilweise oder nur indirekt behandelt,
 - Stelle, die man so oder so lesen kann (Perspektive, Ironie, Tippfehler oder Absicht),
 - Grenzfall bei der Klassifikation („knapp überarbeiten“ / „knapp akzeptiert“),
-- Gremientext nur sinngemäß (WebFetch) oder nicht ganz passend zum Thema.
+- Punkte zur Diskussion nicht beim Thema gepflegt, sondern aus einer anderen Überschrift des Gremientexts genommen, oder Gremientext nicht ganz passend zum Thema.
 
 Inhalt: **was** unsicher ist, **warum**, und **was** die Person prüfen oder entscheiden
 sollte – kurz, ≤ 4 Zeilen.
