@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Plugins für die Korrektur von MUN-Papieren mit Claude und dem MUNIFY DELEGATOR.",
-    "version": "0.6.0"
+    "version": "0.7.0"
   },
   "plugins": [
     {
       "name": "papierkorrektur",
       "source": "./plugins/papierkorrektur",
       "description": "Korrigiert Positions- und Arbeitspapiere aus dem MUNIFY DELEGATOR: Gremientext und Punkte zur Diskussion aus dem DELEGATOR, Bewertung nach DMUN-Korrekturleitfaden, kommentiertes Claude-Doc mit Klassifikation und Feedback-Text, auf Wunsch als Korrekturentwurf im DELEGATOR.",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "category": "productivity",
       "keywords": [
         "mun",

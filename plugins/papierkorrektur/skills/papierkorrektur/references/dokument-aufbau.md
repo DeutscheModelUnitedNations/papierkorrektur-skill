@@ -91,6 +91,8 @@ Abschnittsüberschrift oder an den ersten Satz des Papiers.
 - **Diskussionspunkte:** Liste der „Punkte zur Diskussion“ wörtlich aus `discussionPoints`
   (gremientext.md), je mit „behandelt in Abschnitt …“ oder „nicht behandelt“.
 - **Die drei Kernpunkte** als nummerierte Liste (dieselben wie in den Kommentaren).
+- Als letzte Zeile, klein: „Feedback-Form: <Form>“ (SKILL.md, Schritt 3) – nur für die
+  vorsitzende Person, nicht im Feedback-Text.
 
 ### 5. Klassifikation
 Eine Zeile, fett, dann 1–2 Sätze Begründung:
