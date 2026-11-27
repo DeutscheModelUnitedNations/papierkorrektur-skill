@@ -3,7 +3,8 @@ name: Release
 # Ablauf:
 # 1. Actions → Release → „Run workflow“: zählt die Version hoch (patch/minor/major oder feste
 #    Nummer) und öffnet einen Bump-PR „Version X.Y.Z“ gegen main (main ist geschützt).
-# 2. PR mergen.
+# 2. PR mergen. Mit RELEASE_TOKEN schaltet der Workflow Auto-Merge ein, GitHub mergt dann,
+#    sobald die Pflicht-Checks grün sind.
 # 3. Der Push auf main startet den Job „release“: Er sieht eine Version ohne Release, prüft den
 #    Lint gegen den künftigen Tag und legt Tag + GitHub-Release vX.Y.Z auf dem Merge-Commit an.
 #
@@ -44,6 +45,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
       ZIEL: ${{ inputs.version || inputs.stufe }}
+      HAS_RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -93,6 +95,16 @@ jobs:
           Angestoßen von ${GITHUB_ACTOR} über den Workflow „Release“.
           EOF
           )"
+      # Nur mit RELEASE_TOKEN: Mergt der Standard-Token, startet GitHub für den Push auf main
+      # keine Workflows, und der Job „release“ liefe nie.
+      - name: Auto-Merge einschalten
+        if: env.HAS_RELEASE_TOKEN == 'true'
+        env:
+          NEU: ${{ steps.bump.outputs.neu }}
+        run: |
+          if ! gh pr merge "release/v$NEU" --auto --merge; then
+            echo "::warning::Auto-Merge ließ sich nicht einschalten (Settings → General → „Allow auto-merge“ an? Pflicht-Checks für main gesetzt?). PR von Hand mergen."
+          fi
 
   release:
     name: Tag und Release anlegen
