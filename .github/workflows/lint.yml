@@ -1,0 +1,47 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  plugin:
+    name: Plugin validieren
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: claude plugin validate (Marketplace)
+        run: npx -y @anthropic-ai/claude-code@2.1.332 plugin validate .
+      - name: claude plugin validate (Plugin)
+        run: npx -y @anthropic-ai/claude-code@2.1.332 plugin validate plugins/papierkorrektur
+
+  skill:
+    name: Skill-Lint und Tests (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 3.9 = System-Python auf macOS, mit dem papiertext.py lokal oft läuft
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      # setup-python hat auf aktuellen Ubuntu-Runnern kein 3.9 mehr; uv bringt eigene Builds mit
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python }}
+          enable-cache: false  # keine Abhängigkeiten, nichts zu cachen
+      - name: Python-Version prüfen
+        run: uv run --no-project python -c "import sys; v = '%d.%d' % sys.version_info[:2]; print(sys.version); assert v == '${{ matrix.python }}', v"
+      - name: Skill-Lint
+        run: uv run --no-project python scripts/lint_skill.py
+      - name: papiertext.py kompilieren
+        run: uv run --no-project python -m py_compile plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py
+      - name: Tests
+        run: uv run --no-project python -m unittest discover -s tests -v

@@ -24,6 +24,9 @@ plugins/papierkorrektur/
     references/feedback-vorlage.md       # Feedback-Text an die Delegation: feste Regeln, Zitate
     references/feedback-formen.md        # Formen, Einstiege, Schlüsse (vom Skript gelesen), abgenutzte Wendungen
     scripts/papiertext.py                # Papier-JSON → Text, Wortzahlen, Formalprüfung, Versionsvergleich; --form
+scripts/lint_skill.py                    # Skill-Lint (Versionen, Frontmatter, Verweise)
+tests/                                   # Tests für papiertext.py mit Beispielpapieren
+.github/workflows/lint.yml               # CI: plugin validate, Skill-Lint, Tests
 ```
 
 ## Installation
@@ -62,6 +65,22 @@ python3 plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py ant
 ```bash
 python3 plugins/papierkorrektur/skills/papierkorrektur/scripts/papiertext.py --form --klassifikation ueberarbeiten --seed 1
 ```
+
+Vor dem Push (läuft auch in der CI, `.github/workflows/lint.yml`):
+
+```bash
+python3 scripts/lint_skill.py
+```
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+`lint_skill.py` prüft, ob die Versionsnummern in `marketplace.json` und `plugin.json`
+übereinstimmen, ob `name` und `description` im Frontmatter von `SKILL.md` gültig sind
+(`description` höchstens 1024 Zeichen, ab 950 gibt es eine Warnung) und ob alle relativen
+Verweise in den Markdown-Dateien des Skills auf vorhandene Dateien zeigen. Die Tests in
+`tests/` prüfen `papiertext.py` gegen von Hand gebaute Beispielpapiere in `tests/fixtures/`.
 
 Offen: Abschnitte „Typische Fehler und Textbausteine“ des Korrekturleitfadens (im Original noch in Arbeit).
 
