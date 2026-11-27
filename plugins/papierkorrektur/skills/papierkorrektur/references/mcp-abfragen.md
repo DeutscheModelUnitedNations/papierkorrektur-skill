@@ -1,7 +1,8 @@
 # MCP-Abfragen für den MUNIFY DELEGATOR
 
 Werkzeuge: `whoami`, `graphql_schema`, `graphql_query` (Präfix je nach Installation), dazu
-das Werkzeug für **Korrekturentwürfe** (siehe unten). Alle Abfragen laufen über
+das Werkzeug für **Korrekturentwürfe** (siehe unten) und `agenda_item_context` für Gremientext
+und Punkte zur Diskussion eines Themas (gremientext.md). Alle Abfragen laufen über
 `graphql_query` mit `conferenceId`. Getestet 2026-11.
 
 ## Gotchas
@@ -30,7 +31,7 @@ Ins Dok kommt immer der Link zur **Korrekturseite**.
 | `Paper` | `id`, `type` (`POSITION_PAPER`, `WORKING_PAPER`, `INTRODUCTION_PAPER`), `status`, `firstSubmittedAt`, `updatedAt`, `delegation`, `agendaItem`, `versions` |
 | `Paperversion` | `version`, `status`, `createdAt`, `content` (JSON-String), `reviews` |
 | `Paperreview` | `statusBefore`, `statusAfter`, `createdAt`, `comments` (redacted) |
-| `Committeeagendaitem` | `id`, `title`, `teaserText`, `committee`, `papers` |
+| `Committeeagendaitem` | `id`, `title`, `teaserText`, `discussionPoints`, `committee`, `papers` |
 | `Committee` | `id`, `name`, `abbreviation` |
 
 Status: `DRAFT` → `SUBMITTED` → `CHANGES_REQUESTED` ⇄ `REVISED` → `ACCEPTED`.
