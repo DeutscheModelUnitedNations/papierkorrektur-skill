@@ -95,7 +95,9 @@ also gehört zu jedem Release ein Bump. Nicht von Hand ändern, sondern:
 1. Actions → **Release** → „Run workflow“, `patch`/`minor`/`major` wählen oder eine feste Version
    eintragen. Der Workflow zählt hoch, lässt Lint und Tests laufen und öffnet den PR „Version X.Y.Z“
    von `release/vX.Y.Z` gegen `main`.
-2. PR mergen.
+2. PR mergen. Ist das Secret `RELEASE_TOKEN` gesetzt, schaltet der Workflow Auto-Merge ein und
+   GitHub mergt von selbst, sobald die Pflicht-Checks für `main` grün sind. Dafür muss unter
+   Settings → General „Allow auto-merge“ an sein; verlangt `main` ein Review, wartet der PR darauf.
 3. Der Push auf `main` legt Tag und GitHub-Release `vX.Y.Z` auf dem Merge-Commit an, mit
    automatisch erzeugten Release Notes. Gibt es die Version schon, passiert nichts.
 
