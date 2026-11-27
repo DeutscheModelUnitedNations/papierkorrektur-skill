@@ -15,6 +15,9 @@ Aufrufe:
   papiertext.py antwort.json --version 2   eine bestimmte Version
   papiertext.py antwort.json --diff        Änderungen gegenüber der zuletzt bewerteten Version
   papiertext.py antwort.json --diff --version 3 --gegen 1
+  papiertext.py --form --klassifikation ueberarbeiten --ausser klassisch,leitfragen
+                                           zufällige Feedback-Form, Einstieg und Schluss
+                                           (Listen aus references/feedback-formen.md)
 
 Satzzeichen am Absatzende prüft das Skript bei Arbeitspapieren nicht: der DELEGATOR speichert
 sie nicht, die Vorschau setzt `,` `;` `.` selbst.
@@ -28,7 +31,10 @@ from __future__ import annotations
 import argparse
 import difflib
 import json
+import random
 import re
+import unicodedata
+from pathlib import Path
 import string
 import sys
 from dataclasses import dataclass, field
@@ -425,6 +431,65 @@ def _last_reviewed(numbers: list[int], v_new: int) -> int | None:
     return rv[-1] if rv else None
 
 
+# --------------------------------------------------------------------------- Feedback-Form
+
+FORMEN_DATEI = Path(__file__).resolve().parent.parent / "references" / "feedback-formen.md"
+KLASSIFIKATIONEN = {"akzeptiert": "akzeptiert", "ueberarbeiten": "ueberarbeiten", "überarbeiten": "ueberarbeiten"}
+
+
+def _key(name: str) -> str:
+    """„Am Papier entlang“, „am-papier-entlang“ und „AmPapierEntlang“ → „ampapierentlang“."""
+    name = name.lower().replace("ä", "ae").replace("ö", "oe").replace("ü", "ue").replace("ß", "ss")
+    name = unicodedata.normalize("NFKD", name)
+    return re.sub(r"[^a-z0-9]", "", name)
+
+
+def lese_auswahl(pfad: Path = FORMEN_DATEI) -> dict[str, list[tuple[str, str]]]:
+    """Liest die Tabellen unter „## Auswahl“: {"Formen": [(Name, passt zu), …], …}."""
+    tabellen: dict[str, list[tuple[str, str]]] = {}
+    im_abschnitt, aktuell = False, None
+    for zeile in pfad.read_text(encoding="utf-8").splitlines():
+        if zeile.startswith("## "):
+            im_abschnitt = zeile[3:].strip() == "Auswahl"
+            aktuell = None
+        elif im_abschnitt and zeile.startswith("### "):
+            aktuell = zeile[4:].strip()
+            tabellen[aktuell] = []
+        elif im_abschnitt and aktuell and zeile.startswith("|"):
+            zellen = [z.strip() for z in zeile.strip().strip("|").split("|")]
+            if len(zellen) < 2 or zellen[0] == "Name" or set(zellen[0]) <= set("-: "):
+                continue
+            tabellen[aktuell].append((zellen[0], zellen[1]))
+    return tabellen
+
+
+def _passt(passt_zu: str, klassifikation: str | None) -> bool:
+    return klassifikation is None or _key(passt_zu) in ("beide", klassifikation)
+
+
+def waehle_form(klassifikation: str | None, ausser: list[str], seed: int | None) -> tuple[list[str], list[str]]:
+    """Gibt (Ausgabezeilen, Warnungen) zurück."""
+    tabellen = lese_auswahl()
+    warnungen = []
+    for teil in ("Formen", "Einstiege", "Schlüsse"):
+        if not tabellen.get(teil):
+            raise SystemExit(f"Tabelle „{teil}“ fehlt in {FORMEN_DATEI}.")
+    rng = random.Random(seed)
+    formen = [n for n, p in tabellen["Formen"] if _passt(p, klassifikation)]
+    bekannt = {_key(n) for n, _ in tabellen["Formen"]}
+    aus = {_key(a) for a in ausser if a.strip()}
+    for a in sorted(aus - bekannt):
+        warnungen.append(f"Unbekannte Form in --ausser: {a} (bekannt: {', '.join(sorted(bekannt))})")
+    frei = [n for n in formen if _key(n) not in aus]
+    if not frei:
+        warnungen.append("Alle passenden Formen sind ausgeschlossen – Auswahl ohne --ausser.")
+        frei = formen
+    zeilen = [f"Form: {rng.choice(frei)}"]
+    for teil, etikett in (("Einstiege", "Einstieg"), ("Schlüsse", "Schluss")):
+        zeilen.append(f"{etikett}: {rng.choice([n for n, p in tabellen[teil] if _passt(p, klassifikation)])}")
+    return zeilen, warnungen
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("datei", nargs="?", help="GraphQL-Antwort, content oder Klartext; '-' oder leer = stdin")
@@ -433,7 +498,23 @@ def main() -> int:
     ap.add_argument("--version", type=int, help="Version (Standard: neueste)")
     ap.add_argument("--diff", action="store_true", help="Änderungen gegenüber der zuletzt bewerteten Version")
     ap.add_argument("--gegen", type=int, help="Vergleichsversion für --diff (statt der zuletzt bewerteten)")
+    ap.add_argument("--form", action="store_true",
+                    help="zufällige Feedback-Form mit Einstieg und Schluss ziehen (keine Eingabe nötig)")
+    ap.add_argument("--klassifikation", type=str.lower, choices=sorted(KLASSIFIKATIONEN),
+                    help="mit --form: nur Formen, die zu akzeptiert bzw. ueberarbeiten passen")
+    ap.add_argument("--ausser", default="", help="mit --form: Formen ausschließen, kommagetrennt")
+    ap.add_argument("--seed", type=int, help="mit --form: fester Zufallswert (für Tests)")
     args = ap.parse_args()
+
+    if args.form:
+        zeilen, warnungen = waehle_form(KLASSIFIKATIONEN.get(args.klassifikation or ""),
+                                        args.ausser.split(","), args.seed)
+        for w in warnungen:
+            print(w, file=sys.stderr)
+        print("\n".join(zeilen))
+        return 0
+    if args.klassifikation or args.ausser or args.seed is not None:
+        ap.error("--klassifikation, --ausser und --seed gehen nur mit --form")
 
     if args.stdin or not args.datei or args.datei == "-":
         raw = sys.stdin.read()
